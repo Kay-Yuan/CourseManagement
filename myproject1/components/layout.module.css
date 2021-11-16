@@ -1,0 +1,13 @@
+.Menu {
+  display: flex;
+  justify-content: center;
+}
+
+.Content {
+  display: flex;
+  justify-content: center;
+}
+
+/* .pageTitle {
+  text-align: center;
+} */
