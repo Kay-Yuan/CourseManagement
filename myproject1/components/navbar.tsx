@@ -3,7 +3,7 @@ import { Menu } from "antd";
 import layoutStyles from "../components/layout.module.css";
 import cookie from "cookie";
 
-export default function NavBar() {
+export default function Navbar() {
   // return {cookie.get("currentUser") ? (
   //   <Menu
   //     className={layoutStyles.Menu}

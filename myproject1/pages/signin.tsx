@@ -33,21 +33,23 @@ export default function SignIn() {
 
       const response = await axios.post(
         // "post",
-        "http://ec2-13-239-60-161.ap-southeast-2.compute.amazonaws.com:3001/swagger/api/login",
+        "http://ec2-13-239-60-161.ap-southeast-2.compute.amazonaws.com:3001/api/login",
         {
           email: value.username,
           password: AES.encrypt(value.password, "cms").toString(),
           role: role,
         }
       );
-      const data = response.data;
+      const data = response.data.data;
+      console.log("login success! ", data);
 
       setCookie("currentUser", JSON.stringify(data), {
         path: "/",
         maxAge: 3600, // Expires after 1hr
-        sameSite: true,
+        sameSite: "strict",
+        // httpOnly: true,
+        // secure: process.env.NODE_ENV !== "development",
       });
-      console.log("login success", data);
     } catch (err) {
       console.log(err);
     } finally {
@@ -82,7 +84,7 @@ export default function SignIn() {
         <Form.Item
           name="username"
           rules={[{ required: true, message: "Please input your Username!" }]}
-          disabled={isLoading}
+          // disabled={isLoading}
         >
           <Input
             prefix={<UserOutlined className="site-form-item-icon" />}
@@ -92,7 +94,7 @@ export default function SignIn() {
         <Form.Item
           name="password"
           rules={[{ required: true, message: "Please input your Password!" }]}
-          disabled={isLoading}
+          // disabled={isLoading}
         >
           <Input
             prefix={<LockOutlined className="site-form-item-icon" />}
@@ -104,7 +106,7 @@ export default function SignIn() {
           name="remember"
           valuePropName="checked"
           noStyle
-          disabled={isLoading}
+          // disabled={isLoading}
         >
           <Checkbox>Remember me</Checkbox>
         </Form.Item>

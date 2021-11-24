@@ -1,16 +1,29 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import "antd/dist/antd.css";
-import LayOut from "../components/layout";
+import MainLayout from "../components/layouts/layout";
 import { CookiesProvider } from "react-cookie";
+import type { ReactElement, ReactNode } from "react";
+import type { NextPage } from "next";
 
-function MyApp({ Component, pageProps }: AppProps) {
-  return (
-    <LayOut>
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  // localStorage.setItem("currentUser", "");
+  const getLayout = Component.getLayout ?? ((page) => page);
+
+  return getLayout(
+    <MainLayout>
       <CookiesProvider>
         <Component {...pageProps} />
       </CookiesProvider>
-    </LayOut>
+    </MainLayout>
   );
 }
 

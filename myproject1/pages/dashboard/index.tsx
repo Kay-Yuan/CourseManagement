@@ -1,4 +1,4 @@
-import { Layout, Menu, Breadcrumb } from "antd";
+import { Layout, Menu, Breadcrumb, Avatar } from "antd";
 import {
   DesktopOutlined,
   PieChartOutlined,
@@ -7,9 +7,12 @@ import {
   UserOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
+  MessageOutlined,
 } from "@ant-design/icons";
 import React, { Component } from "react";
-import boardStyle from "../components/dashboard.module.css";
+import boardStyle from "../../components/dashboard.module.css";
+import LayOut from "../../components/layout";
+import withRouter from "next/dist/client/with-router";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -33,8 +36,11 @@ export default class SiderDemo extends Component {
   render() {
     const { collapsed } = this.state;
     return (
-      <Layout style={{ minHeight: "100vh" }}>
+      <Layout hasSider style={{ minHeight: "100vh" }}>
         <Sider collapsible collapsed={collapsed} onCollapse={this.onCollapse}>
+          <div style={{ color: "white", fontSize: 39, textAlign: "center" }}>
+            icon
+          </div>
           <div className="logo" />
           <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
             <Menu.Item key="1" icon={<PieChartOutlined />}>
@@ -58,6 +64,16 @@ export default class SiderDemo extends Component {
           </Menu>
         </Sider>
         <Layout className="site-layout">
+          {/* <Header>
+            <div className={boardStyle.trigger} style={{ padding: 0 }}>
+              {React.createElement(
+                this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
+                {
+                  className: "trigger",
+                  onClick: this.toggle,
+                }
+              )}
+            </div> */}
           <Header className={boardStyle.trigger} style={{ padding: 0 }}>
             {React.createElement(
               this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
@@ -66,6 +82,8 @@ export default class SiderDemo extends Component {
                 onClick: this.toggle,
               }
             )}
+            <MessageOutlined className={boardStyle.messageIcon} />
+            <Avatar className={boardStyle.avatar} icon={<UserOutlined />} />
           </Header>
           <Content style={{ margin: "0 16px" }}>
             <Breadcrumb style={{ margin: "16px 0" }}>
@@ -79,10 +97,11 @@ export default class SiderDemo extends Component {
               Bill is a cat.
             </div>
           </Content>
-          <Footer style={{ textAlign: "center" }}>
+          {/* <Footer style={{ textAlign: "center" }}>
             Ant Design ©2018 Created by Ant UED
-          </Footer>
+          </Footer> */}
         </Layout>
+        {/* </Content> */}
       </Layout>
     );
   }
