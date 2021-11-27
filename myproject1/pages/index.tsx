@@ -13,32 +13,16 @@ export default function Home({
     id: string;
   }[];
 }) {
-  // if (typeof window !== "undefined") {
-  //   console.log("we are running on the client");
-  //   localStorage.setItem("currentUser", "");
-  //   // console.log(localStorage.getItem("cat"));
-  // }
-
   return (
-    <MainLayout home>
-      <div>
-        Welcome !
-        <Link href="/signin">
-          <a>SignIn here</a>
-        </Link>
-      </div>
-    </MainLayout>
+    // <MainLayout home>
+    <div style={{ textAlign: "center" }}>
+      Welcome !
+      <Link href="/signin">
+        <a>SignIn here</a>
+      </Link>
+    </div>
+    // </MainLayout>
   );
-}
-
-export function getInitialProps({
-  req,
-  res,
-}: {
-  req: NextApiRequest;
-  res: NextApiResponse;
-}) {
-  return { props: {} };
 }
 
 Home.getLayout = function getLayout(page: ReactElement) {

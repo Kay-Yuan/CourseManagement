@@ -15,15 +15,12 @@ type AppPropsWithLayout = AppProps & {
 };
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-  // localStorage.setItem("currentUser", "");
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return getLayout(
-    <MainLayout>
-      <CookiesProvider>
-        <Component {...pageProps} />
-      </CookiesProvider>
-    </MainLayout>
+    <CookiesProvider>
+      <Component {...pageProps} />
+    </CookiesProvider>
   );
 }
 

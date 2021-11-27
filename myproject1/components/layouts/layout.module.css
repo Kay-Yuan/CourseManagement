@@ -4,10 +4,24 @@
 }
 
 .Content {
-  display: flex;
-  justify-content: center;
+  /* display: flex;
+  flex: auto; */
+  max-width: 33.33%;
+  margin-left: 33.33%;
 }
 
 /* .pageTitle {
   text-align: center;
 } */
+#components-form-demo-normal-login .login-form {
+  max-width: 300px;
+}
+#components-form-demo-normal-login .login-form-forgot {
+  float: right;
+}
+#components-form-demo-normal-login .ant-col-rtl .login-form-forgot {
+  float: left;
+}
+#components-form-demo-normal-login .login-form-button {
+  width: 100%;
+}

@@ -1,10 +1,27 @@
-// import { Layout } from "antd";
-
-import Navbar from "./navbar";
+import { Layout } from "antd";
 import layoutStyles from "./layout.module.css";
-// import "antd/dist/antd.css";
-// const { Header, Content } = Layout;
+import Navbar from "../navbar";
+const { Header, Content } = Layout;
 
+export default function MainLayout({
+  children,
+  flag,
+}: {
+  children: React.ReactNode;
+  flag?: string;
+}): JSX.Element {
+  return (
+    <>
+      {flag === "signin" ? <Navbar /> : <Navbar />}
+      {/* <Navbar /> */}
+      {/* <main>{children}</main> */}
+
+      <Content className={layoutStyles.Content}>{children}</Content>
+      {/* <Footer /> */}
+      {/* {children} */}
+    </>
+  );
+}
 // export default function LayOut({
 //   children,
 //   home,
@@ -48,19 +65,3 @@ import layoutStyles from "./layout.module.css";
 
 // import Navbar from './navbar'
 // import Footer from './footer'
-
-export default function MainLayout({
-  children,
-  home,
-}: {
-  children: React.ReactNode;
-  home?: boolean;
-}): JSX.Element {
-  return (
-    <>
-      {/* <Navbar /> */}
-      <main>{children}</main>
-      {/* <Footer /> */}
-    </>
-  );
-}

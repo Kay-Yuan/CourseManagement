@@ -15,6 +15,7 @@ import {
 } from "antd";
 import Link from "next/link";
 import { text } from "stream/consumers";
+import MainLayout from "../components/layouts/layout";
 
 export default function SignUp() {
   const [value, setValue] = React.useState();
@@ -64,7 +65,7 @@ export default function SignUp() {
   };
 
   return (
-    <div>
+    <MainLayout flag="signin">
       <h1 style={{ textAlign: "center" }}>SIGN UP YOUR ACCOUNT</h1>
       <h2>* Role</h2>
       <div style={{ margin: 10 }}>
@@ -157,6 +158,6 @@ export default function SignUp() {
         </Form.Item>
       </Form>
       Alredy have an account? <Link href="/signin">Sign in</Link>
-    </div>
+    </MainLayout>
   );
 }

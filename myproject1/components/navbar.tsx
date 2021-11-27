@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Menu } from "antd";
-import layoutStyles from "../components/layout.module.css";
+import layoutStyles from "./layouts/layout.module.css";
 import cookie from "cookie";
 
 export default function Navbar() {

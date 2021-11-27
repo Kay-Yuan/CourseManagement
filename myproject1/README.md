@@ -1,7 +1,10 @@
 ## TODO
 |Tasks|stuck on|
-|1. Layout --- multiple layouts in Nextjs | Apply multiple layouts for different pages |
-|2. Add type for the .tsx | Not familiar with type of TypeScript |
-|3. Dashboard | |
+<!-- |1|| -->
+|1. API call| no response |
+
+|2. Dashboard index.tsx | Header message button hover state |
+|3. Dashboard index.tsx | Breadcrumb show the correct path |
+
 
 ## DONE
