@@ -16,9 +16,6 @@ const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
 export default function DashBoard({ children }: any): JSX.Element {
-  // state = {
-  //   collapsed: false,
-  // };
   const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
 
@@ -28,9 +25,6 @@ export default function DashBoard({ children }: any): JSX.Element {
   };
 
   const toggle = () => {
-    // this.setState({
-    //   collapsed: !this.state.collapsed,
-    // });
     setCollapsed(!collapsed);
   };
 
@@ -50,33 +44,52 @@ export default function DashBoard({ children }: any): JSX.Element {
     </Menu>
   );
 
-  // render() {
-  // const { collapsed } = this.state;
   return (
+    // const role = ;
     <Layout hasSider style={{ minHeight: "100vh" }}>
       <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
         <div style={{ color: "white", fontSize: 39, textAlign: "center" }}>
           CMS
         </div>
         <div className="logo" />
-        <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-          <Menu.Item key="1" icon={<DashboardOutlined />}>
+        <Menu theme="dark" mode="inline">
+          <Menu.Item
+            key="1"
+            icon={<DashboardOutlined />}
+            // onClick={() => router.push(`/dashboard/${role}/index`)}
+            onClick={() => router.push(`/dashboard/manager/index`)}
+          >
             Overview
           </Menu.Item>
           <SubMenu key="sub1" icon={<TeamOutlined />} title="Student">
-            <Menu.Item key="2">Student List</Menu.Item>
-            {/* <Menu.Item key="8">Team 2</Menu.Item> */}
+            <Menu.Item
+              key="2"
+              onClick={() => router.push("/dashboard/manager/students")}
+            >
+              Student List
+            </Menu.Item>
           </SubMenu>
           <SubMenu key="sub2" icon={<UserOutlined />} title="Teacher">
-            <Menu.Item key="3">Teacher List</Menu.Item>
-            {/* <Menu.Item key="4">Bill</Menu.Item>
-              <Menu.Item key="5">Alex</Menu.Item> */}
+            <Menu.Item
+              key="3"
+              onClick={() => router.push(`/dashboard/manager/teachers`)}
+            >
+              Teacher List
+            </Menu.Item>
           </SubMenu>
           <SubMenu key="sub3" icon={<TeamOutlined />} title="Course">
-            <Menu.Item key="4">Course List</Menu.Item>
-            {/* <Menu.Item key="8">Team 2</Menu.Item> */}
+            <Menu.Item
+              key="4"
+              onClick={() => router.push(`/dashboard/manager/courses`)}
+            >
+              Course List
+            </Menu.Item>
           </SubMenu>
-          <Menu.Item key="5" icon={<FileOutlined />}>
+          <Menu.Item
+            key="5"
+            icon={<FileOutlined />}
+            onClick={() => router.push(`/dashboard/manager/message`)}
+          >
             Message
           </Menu.Item>
         </Menu>
@@ -126,7 +139,4 @@ export default function DashBoard({ children }: any): JSX.Element {
       </Layout>
     </Layout>
   );
-  // }
 }
-
-// export default Dashboard;

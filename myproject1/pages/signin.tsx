@@ -9,6 +9,7 @@ import MainLayout from "../components/layouts/layout";
 // import layoutStyles from "../components/layouts/layout";
 import { useRouter } from "next/router";
 import Link from "next/dist/client/link";
+import { Alert } from "antd";
 
 const tailFormItemLayout = {
   xs: {
@@ -42,26 +43,36 @@ export default function SignIn() {
           role: role,
         }
       );
-      const data = response.data.data;
+      const data = response.data;
       // if fail to login?
-
+      if (data.code === 401) {
+        console.log("wrong role");
+        return (
+          <Alert message="wrong role!" type="error" closeText="close now" />
+        );
+        // router.push("/signin");
+      }
       //login success
       if (data.code === 201) {
         console.log("login success! ", data);
 
         // save token
-        setCookie("currentUser", JSON.stringify(data), {
-          path: "/",
-          maxAge: 3600, // Expires after 1hr
-          sameSite: "strict",
-          httpOnly: true,
-          secure: process.env.NODE_ENV !== "development",
-        });
+        // setCookie("currentUser", JSON.stringify(data.data), {
+        //   path: "/",
+        //   maxAge: 3600, // Expires after 1hr
+        //   sameSite: "strict",
+        //   httpOnly: true,
+        //   secure: process.env.NODE_ENV !== "development",
+        // });
+        localStorage.setItem("token", data.data.token);
+        localStorage.setItem("userRole", data.data.role);
 
         // redirect to dashboard
-        // if (data.role === "student") router.push("/dashboard/students");
-        // else if (data.role === "manager") router.push("/dashboard/manager");
-        // else if (data.role === "teacher") router.push("/dashboard/teachers");
+        if (data.data.role === "student") router.push("/dashboard/students");
+        else if (data.data.role === "manager")
+          router.push("/dashboard/manager");
+        else if (data.data.role === "teacher")
+          router.push("/dashboard/teachers");
       } else {
       }
     } catch (err) {
