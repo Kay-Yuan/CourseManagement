@@ -3,23 +3,22 @@ import { Cookies } from "react-cookie";
 import { useRouter } from "next/router";
 import { type } from "os";
 
-export default function Logout() {
+export function Logout() {
   // console.log("Loging out")
   const router = useRouter();
-  const currentUser = Cookies.get("currentUser");
-  //   const currentUser = cookie.value;
-  console.log("current User is ", currentUser);
+
   axios
     .post(
       "http://ec2-13-239-60-161.ap-southeast-2.compute.amazonaws.com:3001/api/logout",
       {
-        headers: { Authorization: `Bearer ${currentUser}` },
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       }
     )
     .then(function (response) {
       const status = response.data.msg;
       if (status === "success") {
         localStorage.removeItem("token");
+        localStorage.removeItem("userRole");
         alert(`You have successfully logout.`);
 
         router.push("/");
@@ -28,6 +27,20 @@ export default function Logout() {
     .catch(function (error) {
       console.log(error);
     });
+}
+
+export interface userInfo {
+  email: string;
+  password: string;
+  role: string;
+}
+
+export function Login(userInfo: userInfo) {
+  return axios.post(
+    // "post",
+    "http://ec2-13-239-60-161.ap-southeast-2.compute.amazonaws.com:3001/api/login",
+    userInfo
+  );
 }
 
 // type IPath = (string | number)[] | string | number;

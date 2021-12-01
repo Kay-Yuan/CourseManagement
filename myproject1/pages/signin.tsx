@@ -1,8 +1,6 @@
 import { Form, Input, Button, Checkbox } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
-import { useCookies } from "react-cookie";
-import axios from "axios";
 import { Radio } from "antd";
 import AES from "crypto-js/aes";
 import MainLayout from "../components/layouts/layout";
@@ -10,6 +8,7 @@ import MainLayout from "../components/layouts/layout";
 import { useRouter } from "next/router";
 import Link from "next/dist/client/link";
 import { Alert } from "antd";
+import { Login, userInfo } from "../lib/services/api-services";
 
 const tailFormItemLayout = {
   xs: {
@@ -24,25 +23,20 @@ const tailFormItemLayout = {
 
 export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
-  const [cookies, setCookie] = useCookies(["currentUser"]);
   const [role, setRole] = useState("student");
   const router = useRouter();
 
   const handleSignIn = async (value: any) => {
-    // e.preventDefault();
+    // value.preventDefault();
     setIsLoading(true);
 
-    // console.log("Received values of form: ", value);
+    const userInfo: userInfo = {
+      email: value.username,
+      password: AES.encrypt(value.password, "cms").toString(),
+      role: role,
+    };
     try {
-      const response = await axios.post(
-        // "post",
-        "http://ec2-13-239-60-161.ap-southeast-2.compute.amazonaws.com:3001/api/login",
-        {
-          email: value.username,
-          password: AES.encrypt(value.password, "cms").toString(),
-          role: role,
-        }
-      );
+      const response = await Login(userInfo);
       const data = response.data;
       // if fail to login?
       if (data.code === 401) {
@@ -66,6 +60,8 @@ export default function SignIn() {
         // });
         localStorage.setItem("token", data.data.token);
         localStorage.setItem("userRole", data.data.role);
+        // localStorage.setItem("currentUser", userInfo);
+        console.log(data.data.token);
 
         // redirect to dashboard
         if (data.data.role === "student") router.push("/dashboard/students");

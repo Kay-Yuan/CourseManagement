@@ -8,7 +8,12 @@ import {
   MenuFoldOutlined,
   MessageOutlined,
 } from "@ant-design/icons";
-import React, { Component, JSXElementConstructor, useState } from "react";
+import React, {
+  Component,
+  JSXElementConstructor,
+  useEffect,
+  useState,
+} from "react";
 import boardStyle from "../../components/layouts/dashboard.module.css";
 import { useRouter } from "next/router";
 
@@ -18,6 +23,7 @@ const { SubMenu } = Menu;
 export default function DashBoard({ children }: any): JSX.Element {
   const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
+  const [role, setRole] = useState(null);
 
   const onCollapse = (collapsed: boolean) => {
     console.log(collapsed);
@@ -44,8 +50,17 @@ export default function DashBoard({ children }: any): JSX.Element {
     </Menu>
   );
 
+  // ??
+  useEffect(() => {
+    let role = localStorage.getItem("userRole");
+    setRole(role);
+    return () => {
+      role = null;
+    };
+  }, []);
+
+  // console.log(localStorage.getItem("token"));
   return (
-    // const role = ;
     <Layout hasSider style={{ minHeight: "100vh" }}>
       <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
         <div style={{ color: "white", fontSize: 39, textAlign: "center" }}>
@@ -56,8 +71,8 @@ export default function DashBoard({ children }: any): JSX.Element {
           <Menu.Item
             key="1"
             icon={<DashboardOutlined />}
-            // onClick={() => router.push(`/dashboard/${role}/index`)}
-            onClick={() => router.push(`/dashboard/manager/index`)}
+            onClick={() => router.push(`/dashboard/${role}/overview`)}
+            // onClick={() => router.push(`/dashboard/overview`)}
           >
             Overview
           </Menu.Item>
