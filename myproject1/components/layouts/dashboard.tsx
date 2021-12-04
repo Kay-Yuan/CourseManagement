@@ -23,7 +23,7 @@ const { SubMenu } = Menu;
 export default function DashBoard({ children }: any): JSX.Element {
   const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
-  const [role, setRole] = useState(null);
+  const [role, setRole] = useState("");
 
   const onCollapse = (collapsed: boolean) => {
     console.log(collapsed);
@@ -52,7 +52,7 @@ export default function DashBoard({ children }: any): JSX.Element {
 
   // ??
   useEffect(() => {
-    let role = localStorage.getItem("userRole");
+    let role: string = localStorage.getItem("userRole");
     setRole(role);
     return () => {
       role = null;

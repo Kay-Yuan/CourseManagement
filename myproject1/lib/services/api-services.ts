@@ -5,7 +5,6 @@ import { type } from "os";
 import { apiPath } from "./config";
 
 export function Logout() {
-  // console.log("Loging out")
   const router = useRouter();
 
   axios

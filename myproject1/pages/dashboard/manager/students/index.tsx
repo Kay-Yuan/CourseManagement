@@ -1,6 +1,6 @@
 import DashBoard from "../../../../components/layouts/dashboard";
 import React, { useState, useEffect } from "react";
-import { Space, Breadcrumb, Table } from "antd";
+import { Space, Breadcrumb, Table, PaginationProps, Button } from "antd";
 import {
   StudentResponse,
   Student,
@@ -22,23 +22,18 @@ import { processStudentData } from "../../../../lib/services/student";
 export default function StudentIndex() {
   const [data, setData] = useState<StudentInList[]>();
   const [isLoading, setIsLoading] = useState(false);
-  const [pagination, setPagination] = useState({});
+  const [pagination, setPagination] = useState<PaginationProps>({});
   const token = localStorage.getItem("token");
 
   // DidMount
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
-      const rows: any = [];
-
       try {
-        const response = await getService("/students?page=1&limit=20", {
+        const response = await getService("/students?page=1&limit=10", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log("value is " + response);
         setPagination({ ...pagination, total: response.data.total });
-
-        // console.log("value is " + res.data);
         const rows: StudentInList[] = processStudentData(response);
         setData(rows);
       } catch (error) {
@@ -160,6 +155,9 @@ export default function StudentIndex() {
         <Breadcrumb.Item>Student</Breadcrumb.Item>
         <Breadcrumb.Item>Student List</Breadcrumb.Item>
       </Breadcrumb>
+      <div className="tableBar">
+        <Button type="primary">+ Add</Button>
+      </div>
       <Table<StudentInList>
         // columns={columns}
         dataSource={data}
