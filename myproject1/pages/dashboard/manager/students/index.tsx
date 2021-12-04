@@ -1,5 +1,4 @@
 import DashBoard from "../../../../components/layouts/dashboard";
-import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { Space, Breadcrumb, Table } from "antd";
 import {
@@ -7,69 +6,152 @@ import {
   Student,
   StudentInList,
 } from "../../../../lib/model/student";
+import {
+  Login,
+  userInfo,
+  getService,
+} from "../../../../lib/services/api-services";
+import {
+  ColumnGroupType,
+  ColumnType,
+  TablePaginationConfig,
+} from "antd/lib/table";
+import { FilterValue, SorterResult } from "antd/lib/table/interface";
+import { processStudentData } from "../../../../lib/services/student";
 
 export default function StudentIndex() {
-  const [data, setData] = useState();
-  const { Column, ColumnGroup } = Table;
+  const [data, setData] = useState<StudentInList[]>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [pagination, setPagination] = useState({});
+  const token = localStorage.getItem("token");
 
+  // DidMount
   useEffect(() => {
     async function fetchData() {
-      const token = localStorage.getItem("token");
-      // console.log(token);
-      let value: StudentResponse;
+      setIsLoading(true);
       const rows: any = [];
 
       try {
-        const response = await axios.get(
-          "http://ec2-13-239-60-161.ap-southeast-2.compute.amazonaws.com:3001/api/students?page=1&limit=20",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        value = response.data.data;
-        console.log(value);
-
-        const students: Student[] = value?.students;
-        console.log("student is ", students);
-
-        const calculateJoinTime = (joinTime: string): string => {
-          const now = new Date();
-          const then = new Date(joinTime);
-          let Difference_In_Time: number = now.getTime() - then.getTime();
-
-          // To calculate the no. of days between two dates
-          let years: number = Difference_In_Time / (1000 * 3600 * 24 * 30 * 12);
-
-          const almostYear: number = parseInt(years.toString()) + 1;
-
-          if (parseInt((years % 1).toFixed(2).substring(2)) >= 50) {
-            return "Almost " + almostYear + " years ago";
-          } else if (parseInt((years % 1).toFixed(2).substring(2)) < 50) {
-            return "Over " + parseInt(years.toString()) + " years ago";
-          }
-          return "No record.";
-        };
-
-        students.forEach((e) => {
-          const obj: StudentInList = {
-            id: e.id,
-            name: e.name,
-            area: e.country,
-            email: e.email,
-            selectedCurriculum: e.courses?.map((item) => item.name).join(","),
-            studentType: e.type?.name,
-            joinTime: calculateJoinTime(e.createdAt),
-          };
-          rows.push(obj);
+        const response = await getService("/students?page=1&limit=20", {
+          headers: { Authorization: `Bearer ${token}` },
         });
+        console.log("value is " + response);
+        setPagination({ ...pagination, total: response.data.total });
+
+        // console.log("value is " + res.data);
+        const rows: StudentInList[] = processStudentData(response);
         setData(rows);
       } catch (error) {
         console.log(error);
       } finally {
+        setIsLoading(false);
       }
     }
     fetchData();
   }, []);
+
+  // const columns: ColumnType<Student>[] = [
+  //   {
+  //     title: "No.",
+  //     dataIndex: "id",
+  //     key: 'id',
+  //     // sorter: true,
+  //   },
+  //   {
+  //     title: "Name",
+  //     dataIndex: "name",
+  //     key: 'name',
+  //     sorter: true,
+  //   },
+  //   {
+  //     title: "Area",
+  //     dataIndex: "area",
+  //     filters: [
+  //       { text: "China", value: "China" },
+  //       { text: "Australia", value: "Australia" },
+  //     ],
+  //     key:'area',
+  //   },
+  //   {
+  //     title: "Email",
+  //     dataIndex: "email",
+  //     key: "email",
+  //   },
+  //   {
+  //     title: "Selected Curriculum",
+  //     dataIndex: "selectedCcurriculum",
+  //     key: "selectedCurriculum",
+  //   },
+  //   {
+  //     title: "Student Type",
+  //     dataIndex: "studentType",
+  //     key: "studentType",
+  //     filters: [
+  //       { text: "Tester", value: "tester" },
+  //       { text: "Developer", value: "developer" },
+  //     ],
+  //   },
+  //   {
+  //     title: "Join Time",
+  //     dataIndex: "joinTime",
+  //     key: "joinTime",
+  //   },
+  //   {
+  //     title: "Action",
+  //     dataIndex: "action",
+  //     key: "action",
+  //     render: () => (
+  //       <Space size="middle">
+  //         <a>Edit</a>
+  //         <a>Delete</a>
+  //       </Space>
+  //     ),
+  //   },
+  // ];
+
+  function getRandomuserParams(params: {
+    pagination: { pageSize: number; current: number };
+  }) {
+    return {
+      // results: params.pagination.pageSize,
+      // page: params.pagination.current,
+      ...params,
+    };
+  }
+
+  const handleTableChange = (
+    pagination: TablePaginationConfig
+    // filters: Record<string, FilterValue | null>,
+    // sorter: SorterResult<Student> | SorterResult<Student>[]
+  ): void => {
+    fetch({
+      // sortField: sorter.field,
+      // sortOrder: sorter.order,
+      pagination,
+      // ...filters,
+    });
+
+    async function fetch(params: any) {
+      setIsLoading(true);
+      // process pagination
+      // console.log(pagination);
+      const pageConfig = `page=${pagination.current}&limit=${pagination.pageSize}`;
+      try {
+        const res = await getService(`/students?${pageConfig}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setPagination({ ...params.pagination, total: res.data.total });
+
+        // console.log("value is " + res.data);
+        const rows: StudentInList[] = processStudentData(res);
+        setData(rows);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
 
   return (
     <DashBoard>
@@ -78,23 +160,51 @@ export default function StudentIndex() {
         <Breadcrumb.Item>Student</Breadcrumb.Item>
         <Breadcrumb.Item>Student List</Breadcrumb.Item>
       </Breadcrumb>
-      <Table dataSource={data}>
-        <Column title="No." dataIndex="id" key="id" />
-        <Column title="Name" dataIndex="name" key="name" />
-        <Column title="Area" dataIndex="area" key="area" />
-        <Column title="Email" dataIndex="email" key="email" />
-        <Column
+      <Table<StudentInList>
+        // columns={columns}
+        dataSource={data}
+        loading={isLoading}
+        onChange={handleTableChange}
+        pagination={pagination}
+        rowKey={(record: StudentInList) => record.name}
+      >
+        <Table.Column<StudentInList> title="No." dataIndex="id" key="id" />
+        <Table.Column<StudentInList>
+          title="Name"
+          dataIndex="name"
+          sorter={true}
+          key="name"
+        />
+        <Table.Column<StudentInList>
+          title="Area"
+          dataIndex="area"
+          key="area"
+          filters={[
+            { text: "China", value: "China" },
+            { text: "Australia", value: "Australia" },
+          ]}
+        />
+        <Table.Column<StudentInList>
+          title="Email"
+          dataIndex="email"
+          key="email"
+        />
+        <Table.Column<StudentInList>
           title="Selected Curriculum"
           dataIndex="selectedCurriculum"
           key="selectedCurriculum"
         />
-        <Column
+        <Table.Column<StudentInList>
           title="Student Type"
           dataIndex="studentType"
           key="studentType"
         />
-        <Column title="Join Time" dataIndex="joinTime" key="joinTime" />
-        <Column
+        <Table.Column<StudentInList>
+          title="Join Time"
+          dataIndex="joinTime"
+          key="joinTime"
+        />
+        <Table.Column<StudentInList>
           title="Action"
           key="action"
           render={(text, record) => (

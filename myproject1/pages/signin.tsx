@@ -36,8 +36,7 @@ export default function SignIn() {
       role: role,
     };
     try {
-      const response = await Login(userInfo);
-      const data = response.data;
+      const data = await Login(userInfo);
       // if fail to login?
       if (data.code === 401) {
         console.log("wrong role");
@@ -61,7 +60,7 @@ export default function SignIn() {
         localStorage.setItem("token", data.data.token);
         localStorage.setItem("userRole", data.data.role);
         // localStorage.setItem("currentUser", userInfo);
-        console.log(data.data.token);
+        // console.log(data.data.token);
 
         // redirect to dashboard
         if (data.data.role === "student") router.push("/dashboard/students");
@@ -70,6 +69,7 @@ export default function SignIn() {
         else if (data.data.role === "teacher")
           router.push("/dashboard/teachers");
       } else {
+        // ??
       }
     } catch (err) {
       console.log(err);

@@ -1,3 +1,5 @@
+import { ResponsePaginator } from "./response";
+
 // export interface Student<T = CourseShort> {
 //   id: number;
 //   name: string;
@@ -36,10 +38,10 @@ export interface StudentBase {
   id: number;
   name: string;
 }
-export interface ResponsePaginator {
-  page: number;
-  limit: number;
-}
+// export interface ResponsePaginator {
+//   page: number;
+//   limit: number;
+// }
 
 export interface StudentListRecord extends StudentBase {
   area?: string | undefined;

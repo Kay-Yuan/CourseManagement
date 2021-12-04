@@ -1,42 +1,57 @@
 import DashBoard from "../../../../components/layouts/dashboard";
-import { getService } from "../api/service";
-import { AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { Space, Breadcrumb, Table } from "antd";
-import { ResponsePaginator } from "../model/response";
-import { TeacherResponse, Teacher, TeacherListRecord } from "../model/teacher";
+import { ResponsePaginator } from "../../../../lib/model/response";
+import {
+  TeacherResponse,
+  Teacher,
+  TeacherInList,
+} from "../../../../lib/model/Teacher";
 
 export default function TeachersIndex() {
   const [data, setData] = useState();
   const { Column, ColumnGroup } = Table;
 
   useEffect(() => {
-    let value: TeacherResponse;
-    getService("teachers?page=1&limit=20")
-      .then(function (response: AxiosResponse) {
+    async function fetchData() {
+      const token = localStorage.getItem("token");
+      let value: TeacherResponse;
+      const rows: any = [];
+
+      try {
+        const response: AxiosResponse = await axios.get(
+          "http://ec2-13-239-60-161.ap-southeast-2.compute.amazonaws.com:3001/api/teachers?page=1&limit=20",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         value = response.data.data;
-      })
-      .catch(function (error: any) {
-        console.log(error);
-      })
-      .then(function () {
-        let rows: any = [];
-        const json: Teacher[] = value.teachers;
-        json.forEach((e) => {
-          const obj: TeacherListRecord = {
-            id: e.id,
-            name: e.name,
-            country: e.country,
-            email: e.email,
-            skill: e.skills.map((item: any) => item.name).join(","),
-            courseAmount: e.courseAmount,
-            phone: e.phone,
+        console.log(value);
+
+        const teachers: Teacher[] = value?.teachers;
+        console.log("teachers is ", teachers);
+
+        teachers.forEach((teacher) => {
+          const obj: TeacherInList = {
+            id: teacher.id,
+            name: teacher.name,
+            country: teacher.country,
+            email: teacher.email,
+            skill: teacher.skills.map((item: any) => item.name).join(","),
+            courseAmount: teacher.courseAmount,
+            phone: teacher.phone,
           };
-          console.log(obj);
+          // console.log(obj);
           rows.push(obj);
         });
         setData(rows);
-      });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    fetchData();
   }, []);
 
   return (

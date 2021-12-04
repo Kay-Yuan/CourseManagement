@@ -1,19 +1,17 @@
-import axios from "axios";
+import axios, { AxiosPromise, AxiosResponse } from "axios";
 import { Cookies } from "react-cookie";
 import { useRouter } from "next/router";
 import { type } from "os";
+import { apiPath } from "./config";
 
 export function Logout() {
   // console.log("Loging out")
   const router = useRouter();
 
   axios
-    .post(
-      "http://ec2-13-239-60-161.ap-southeast-2.compute.amazonaws.com:3001/api/logout",
-      {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      }
-    )
+    .post(apiPath + "/logout", {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    })
     .then(function (response) {
       const status = response.data.msg;
       if (status === "success") {
@@ -35,14 +33,42 @@ export interface userInfo {
   role: string;
 }
 
-export function Login(userInfo: userInfo) {
-  return axios.post(
-    // "post",
-    "http://ec2-13-239-60-161.ap-southeast-2.compute.amazonaws.com:3001/api/login",
-    userInfo
-  );
+export async function Login(userInfo: userInfo): Promise<T> {
+  return axios
+    .post(apiPath + "/login", userInfo)
+    .then((res) => res.data)
+    .catch((err) => console.log(err));
 }
 
+export async function getService(
+  endpoint: string,
+  params?: object
+): Promise<AxiosResponse<any, any>> {
+  // const token = localStorage.getItem("token");
+  let path: string = apiPath + endpoint;
+  if (params) {
+    path = apiPath + endpoint;
+    return axios
+      .get(path, params)
+      .then((res: AxiosResponse) => res.data)
+      .catch((err) => console.log(err));
+  } else
+    return axios
+      .get(path, params)
+      .then((res: AxiosResponse) => res.data)
+      .catch((err) => console.log(err));
+}
+
+export async function postService(
+  endpoint: string,
+  params: object
+): Promise<AxiosResponse<any, any>> {
+  // const token = localStorage.getItem("token");
+  return axios
+    .post(apiPath + endpoint, params)
+    .then((res: AxiosResponse) => res.data)
+    .catch((err) => console.log(err));
+}
 // type IPath = (string | number)[] | string | number;
 
 // class BaseApiService {
