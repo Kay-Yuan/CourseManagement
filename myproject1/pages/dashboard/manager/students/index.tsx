@@ -1,6 +1,17 @@
 import DashBoard from "../../../../components/layouts/dashboard";
 import React, { useState, useEffect } from "react";
-import { Space, Breadcrumb, Table, PaginationProps, Button } from "antd";
+import {
+  Space,
+  Breadcrumb,
+  Table,
+  PaginationProps,
+  Button,
+  Tooltip,
+  Input,
+  Modal,
+  Form,
+  Select,
+} from "antd";
 import {
   StudentResponse,
   Student,
@@ -18,15 +29,19 @@ import {
 } from "antd/lib/table";
 import { FilterValue, SorterResult } from "antd/lib/table/interface";
 import { processStudentData } from "../../../../lib/services/student";
+import studentStyle from "../../../../components/layouts/layout.module.css";
+import SearchOutlined from "@ant-design/icons/lib/icons/SearchOutlined";
 
 export default function StudentIndex() {
   const [data, setData] = useState<StudentInList[]>();
   const [isLoading, setIsLoading] = useState(false);
   const [pagination, setPagination] = useState<PaginationProps>({});
-  const token = localStorage.getItem("token");
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [form] = Form.useForm();
 
   // DidMount
   useEffect(() => {
+    const token = localStorage.getItem("token");
     async function fetchData() {
       setIsLoading(true);
       try {
@@ -127,6 +142,7 @@ export default function StudentIndex() {
     });
 
     async function fetch(params: any) {
+      const token = localStorage.getItem("token");
       setIsLoading(true);
       // process pagination
       // console.log(pagination);
@@ -148,6 +164,27 @@ export default function StudentIndex() {
     }
   };
 
+  const { Search } = Input;
+  const onSearch = (value: string) => {
+    console.log(value);
+  };
+
+  const onAddChange = () => {};
+
+  const handleAdd = () => {
+    setIsModalVisible(false);
+    // form.resetFields();
+  };
+
+  const handleCancel = () => {
+    form.resetFields();
+    setIsModalVisible(false);
+  };
+
+  const onReset = () => {
+    form.resetFields();
+  };
+
   return (
     <DashBoard>
       <Breadcrumb style={{ margin: "16px 0" }}>
@@ -155,22 +192,98 @@ export default function StudentIndex() {
         <Breadcrumb.Item>Student</Breadcrumb.Item>
         <Breadcrumb.Item>Student List</Breadcrumb.Item>
       </Breadcrumb>
-      <div className="tableBar">
-        <Button type="primary">+ Add</Button>
+      <div className={studentStyle.tableBar}>
+        <Button
+          type="primary"
+          onClick={() => {
+            setIsModalVisible(true);
+            form.resetFields();
+          }}
+        >
+          + Add
+        </Button>
+        <Search
+          placeholder="input search text"
+          allowClear
+          onSearch={onSearch}
+          style={{ width: 300 }}
+        />
       </div>
+      <Modal
+        title="Add new student"
+        visible={isModalVisible}
+        onOk={handleAdd}
+        onCancel={handleCancel}
+        okText="Add"
+      >
+        <Form
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+          layout="horizontal"
+          onFinish={handleAdd}
+        >
+          <Form.Item
+            name="name"
+            label="Name"
+            rules={[{ required: true, message: "Please input student name!" }]}
+          >
+            <Input placeholder="student name" />
+          </Form.Item>
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[
+              {
+                type: "email",
+                required: true,
+                message: "Please input student email!",
+              },
+            ]}
+          >
+            <Input placeholder="email" />
+          </Form.Item>
+          <Form.Item
+            name="area"
+            label="Area"
+            rules={[{ required: true, message: "Please select the area!" }]}
+          >
+            <Select allowClear>
+              <Select.Option value="China">China</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name="studenttype"
+            label="Student Type"
+            rules={[
+              { required: true, message: "Please select the student type!" },
+            ]}
+          >
+            <Select allowClear>
+              <Select.Option value="tester">Tester</Select.Option>
+              <Select.Option value="developer">Developer</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item>
+            <Button htmlType="button" onClick={onReset}>
+              Reset
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
       <Table<StudentInList>
         // columns={columns}
         dataSource={data}
         loading={isLoading}
         onChange={handleTableChange}
         pagination={pagination}
-        rowKey={(record: StudentInList) => record.name}
+        rowKey={(row: StudentInList) => row.id}
+        scroll={{ y: 750 }}
       >
         <Table.Column<StudentInList> title="No." dataIndex="id" key="id" />
         <Table.Column<StudentInList>
           title="Name"
           dataIndex="name"
-          sorter={true}
+          sorter={(a, b) => a.name.length - b.name.length}
           key="name"
         />
         <Table.Column<StudentInList>
@@ -181,6 +294,9 @@ export default function StudentIndex() {
             { text: "China", value: "China" },
             { text: "Australia", value: "Australia" },
           ]}
+          onFilter={(value, record: StudentInList) =>
+            record.area?.indexOf(value) === 0
+          }
         />
         <Table.Column<StudentInList>
           title="Email"
@@ -196,6 +312,13 @@ export default function StudentIndex() {
           title="Student Type"
           dataIndex="studentType"
           key="studentType"
+          filters={[
+            { text: "Tester", value: "tester" },
+            { text: "Developer", value: "developer" },
+          ]}
+          onFilter={(value, record: StudentInList) =>
+            record.studentType?.indexOf(value) === 0
+          }
         />
         <Table.Column<StudentInList>
           title="Join Time"

@@ -1,5 +1,2 @@
-## TODO
-1 Table component sort and filter features.(Antd example seems sort and filter on server side with special parameters)
-
-
-## DONE
+1. student List page, add modal reset button not work.
+2. 

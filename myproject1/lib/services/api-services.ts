@@ -32,7 +32,7 @@ export interface userInfo {
   role: string;
 }
 
-export async function Login(userInfo: userInfo): Promise<T> {
+export async function Login(userInfo: userInfo): Promise<any> {
   return axios
     .post(apiPath + "/login", userInfo)
     .then((res) => res.data)

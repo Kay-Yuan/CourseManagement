@@ -49,18 +49,8 @@ export default function SignIn() {
       if (data.code === 201) {
         console.log("login success! ", data);
 
-        // save token
-        // setCookie("currentUser", JSON.stringify(data.data), {
-        //   path: "/",
-        //   maxAge: 3600, // Expires after 1hr
-        //   sameSite: "strict",
-        //   httpOnly: true,
-        //   secure: process.env.NODE_ENV !== "development",
-        // });
         localStorage.setItem("token", data.data.token);
         localStorage.setItem("userRole", data.data.role);
-        // localStorage.setItem("currentUser", userInfo);
-        // console.log(data.data.token);
 
         // redirect to dashboard
         if (data.data.role === "student") router.push("/dashboard/students");
