@@ -1,2 +1,1 @@
-1. student List page, add modal reset button not work.
-2. 
+1. how to get id by [id].tsx

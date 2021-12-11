@@ -31,6 +31,7 @@ import { FilterValue, SorterResult } from "antd/lib/table/interface";
 import { processStudentData } from "../../../../lib/services/student";
 import studentStyle from "../../../../components/layouts/layout.module.css";
 import SearchOutlined from "@ant-design/icons/lib/icons/SearchOutlined";
+import Link from "next/link";
 
 export default function StudentIndex() {
   const [data, setData] = useState<StudentInList[]>();
@@ -177,20 +178,24 @@ export default function StudentIndex() {
   };
 
   const handleCancel = () => {
-    form.resetFields();
+    // form.resetFields();
     setIsModalVisible(false);
-  };
-
-  const onReset = () => {
-    form.resetFields();
   };
 
   return (
     <DashBoard>
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item>CMS MANAGER SYSTEM</Breadcrumb.Item>
-        <Breadcrumb.Item>Student</Breadcrumb.Item>
-        <Breadcrumb.Item>Student List</Breadcrumb.Item>
+        <Breadcrumb.Item>
+          <Link href="/dashboard/manager">
+            <a>Student</a>
+          </Link>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>
+          {/* <Link href="/dashboard/manager/students"> */}
+          Student List
+          {/* </Link> */}
+        </Breadcrumb.Item>
       </Breadcrumb>
       <div className={studentStyle.tableBar}>
         <Button
@@ -215,8 +220,10 @@ export default function StudentIndex() {
         onOk={handleAdd}
         onCancel={handleCancel}
         okText="Add"
+        destroyOnClose
       >
         <Form
+          // form={form}
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
           layout="horizontal"
@@ -263,11 +270,6 @@ export default function StudentIndex() {
               <Select.Option value="developer">Developer</Select.Option>
             </Select>
           </Form.Item>
-          <Form.Item>
-            <Button htmlType="button" onClick={onReset}>
-              Reset
-            </Button>
-          </Form.Item>
         </Form>
       </Modal>
       <Table<StudentInList>
@@ -285,6 +287,14 @@ export default function StudentIndex() {
           dataIndex="name"
           sorter={(a, b) => a.name.length - b.name.length}
           key="name"
+          render={(value, record: StudentInList) => (
+            <Link
+              href={`/dashboard/manager/students/${record.id}`}
+              key={record.id}
+            >
+              <a>{value}</a>
+            </Link>
+          )}
         />
         <Table.Column<StudentInList>
           title="Area"
