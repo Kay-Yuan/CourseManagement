@@ -16,6 +16,7 @@ import React, {
 } from "react";
 import boardStyle from "../../components/layouts/dashboard.module.css";
 import { useRouter } from "next/router";
+import { Logout } from "../../lib/services/api-services";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -42,7 +43,7 @@ export default function DashBoard({ children }: any): JSX.Element {
         </a>
       </Menu.Item>
       <Menu.Item key="logout">
-        <a target="_blank" rel="noopener noreferrer">
+        <a target="_blank" rel="noopener noreferrer" onClick={Logout}>
           {/* <a target="_blank" rel="noopener noreferrer" onClick={logout}> */}
           Logout
         </a>
@@ -121,7 +122,7 @@ export default function DashBoard({ children }: any): JSX.Element {
               )}
             </div> */}
         {/* <Header> */}
-        <Header className={boardStyle.trigger} style={{ padding: 0 }}>
+        <Header className={boardStyle.header} style={{ padding: 0 }}>
           {React.createElement(
             collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
             {
@@ -129,7 +130,6 @@ export default function DashBoard({ children }: any): JSX.Element {
               onClick: toggle,
             }
           )}
-          {/* </div> */}
           <MessageOutlined className={boardStyle.messageIcon} />
           <Dropdown overlay={userDropDownMenu} arrow>
             <Avatar className={boardStyle.avatar} icon={<UserOutlined />} />

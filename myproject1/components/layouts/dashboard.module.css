@@ -4,6 +4,15 @@
   background: rgba(255, 255, 255, 0.3);
 }
 
+.header {
+  padding: 0 24px;
+  font-size: 18px;
+  line-height: 64px;
+  /* cursor: pointer; */
+  transition: color 0.3s;
+  color: #fff;
+}
+
 .trigger {
   padding: 0 24px;
   font-size: 18px;
@@ -18,17 +27,22 @@
 }
 
 .avatar {
+  cursor: pointer;
   position: relative;
   left: 92%;
+  transition: color 0.3s;
 }
 .avatar:hover {
   color: #1890ff;
 }
 
 .messageIcon {
+  cursor: pointer;
   font-size: x-large;
   position: relative;
+  vertical-align: middle;
   left: 91%;
+  transition: color 0.3s;
 }
 .messageIcon:hover {
   color: #1890ff;

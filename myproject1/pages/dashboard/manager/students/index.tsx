@@ -11,6 +11,7 @@ import {
   Modal,
   Form,
   Select,
+  Popconfirm,
 } from "antd";
 import {
   StudentResponse,
@@ -39,6 +40,7 @@ export default function StudentIndex() {
   const [pagination, setPagination] = useState<PaginationProps>({});
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [form] = Form.useForm();
+  const [title, setTitle] = useState("");
 
   // DidMount
   useEffect(() => {
@@ -201,8 +203,9 @@ export default function StudentIndex() {
         <Button
           type="primary"
           onClick={() => {
+            setTitle("Add New Student");
             setIsModalVisible(true);
-            form.resetFields();
+            // form.resetFields();
           }}
         >
           + Add
@@ -215,7 +218,7 @@ export default function StudentIndex() {
         />
       </div>
       <Modal
-        title="Add new student"
+        title={title}
         visible={isModalVisible}
         onOk={handleAdd}
         onCancel={handleCancel}
@@ -340,8 +343,24 @@ export default function StudentIndex() {
           key="action"
           render={(text, record) => (
             <Space size="middle">
-              <a>Edit</a>
-              <a>Delete</a>
+              <a
+                onClick={() => {
+                  setTitle("Edit Student");
+                  form.setFieldsValue({
+                    name: record.name,
+                    email: record.email,
+                    area: record.area,
+                    studenttype: record.studentType,
+                  });
+                  setIsModalVisible(true);
+                  console.log(record);
+                }}
+              >
+                Edit
+              </a>
+              <Popconfirm title="Sure to delete?">
+                <a>Delete</a>
+              </Popconfirm>
             </Space>
           )}
         />

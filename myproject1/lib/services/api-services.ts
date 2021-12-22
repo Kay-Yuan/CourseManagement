@@ -5,25 +5,23 @@ import { type } from "os";
 import { apiPath } from "./config";
 
 export function Logout() {
-  const router = useRouter();
+  // const router = useRouter();
 
   axios
-    .post(apiPath + "/logout", {
+    .post(apiPath + "/logout", "", {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     })
-    .then(function (response) {
+    .then((response) => {
       const status = response.data.msg;
       if (status === "success") {
         localStorage.removeItem("token");
         localStorage.removeItem("userRole");
         alert(`You have successfully logout.`);
 
-        router.push("/");
+        // router.push("/");
       }
     })
-    .catch(function (error) {
-      console.log(error);
-    });
+    .catch((err) => console.log(err));
 }
 
 export interface userInfo {
@@ -60,11 +58,11 @@ export async function getService(
 
 export async function postService(
   endpoint: string,
-  params: object
+  params?: object
 ): Promise<AxiosResponse<any, any>> {
   // const token = localStorage.getItem("token");
   return axios
-    .post(apiPath + endpoint, params)
+    .post(apiPath + endpoint, params ? params : "")
     .then((res: AxiosResponse) => res.data)
     .catch((err) => console.log(err));
 }

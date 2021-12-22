@@ -3,12 +3,13 @@ import { getPostData } from "../../../../lib/services/student";
 
 // import utilStyles from "../../styles/utils.module.css";
 import DashBoard from "../../../../components/layouts/dashboard";
-import { Breadcrumb } from "antd";
+import { Breadcrumb, Card, Col, Row } from "antd";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { wrap } from "module";
 import { BlockList } from "net";
+import { useRouter } from "next/router";
 
 // export function getStaticProps({ params }: { params: any }) {
 //   //   const postData = await getPostData(params.id);
@@ -28,23 +29,47 @@ import { BlockList } from "net";
 //   };
 // }
 const Table = styled.table`
+  width: 100%;
   border: 1px solid black;
   align-self: auto;
 `;
 const Td = styled.td`
+  width: 50%;
   border: 1px solid black;
-  /* text-align: center; */
+  text-align: center;
   align-items: center;
-  /* display: block;
-  margin: auto; */
+  align-content: center;
+  margin: auto;
 `;
 // params?
+const tabList = [
+  {
+    key: "about",
+    tab: "About",
+  },
+  {
+    key: "courses",
+    tab: "Courses",
+  },
+];
+
+const contentList: { [key: string]: any } = {
+  about: <p>About</p>,
+  courses: <p>Courses</p>,
+};
 export default function Post() {
+  const [activeTabKey1, setActiveTabKey1] = useState("about");
+  const router = useRouter();
+  const { id } = router.query;
   //   useEffect((id: string) => {
   //     // async function fetchData() {}
   //     // fetchData();
   //     console.log("id is " + id);
   //   }, []);
+
+  const onTab1Change = (key: string) => {
+    setActiveTabKey1(key);
+  };
   return (
     <DashBoard>
       <Breadcrumb style={{ margin: "16px 0" }}>
@@ -61,47 +86,86 @@ export default function Post() {
         </Breadcrumb.Item>
         <Breadcrumb.Item></Breadcrumb.Item>
       </Breadcrumb>
-      <div style={{ display: "flex", justifyContent: "space-around" }}>
-        <Table
-          style={{
-            width: "20em",
-            height: "30em",
-          }}
-        >
-          <tr>
-            <Td colSpan={2}>
-              <div
-                style={{
-                  width: "10em",
-                  height: "10em",
-                  backgroundColor: "gray",
-                  borderRadius: "50%",
-                  margin: "auto",
-                }}
-              ></div>
-              {/* <img src="" alt="amator" /> */}
-            </Td>
-          </tr>
-          <tr>
-            <Td>1</Td>
-            <Td>2</Td>
-          </tr>
-        </Table>
-        <Table
-          style={{
-            width: "10em",
-            height: "60em",
-          }}
-        >
-          <tr>
-            <Td colSpan={2}>{/* <img src="" alt="amator" /> */}</Td>
-          </tr>
-          <tr>
-            <Td>1</Td>
-            <Td>2</Td>
-          </tr>
-        </Table>
-      </div>
+      <Row
+        style={{
+          width: "auto",
+          background: "white",
+          justifyContent: "space-around",
+        }}
+      >
+        <Col span={9}>
+          <Table>
+            <thead>
+              <tr>
+                <Td colSpan={2}>
+                  <div
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      background: "grey",
+                      borderRadius: "50%",
+                      margin: "1em auto",
+
+                      //   border: "3px solid grey",
+                    }}
+                  ></div>
+                </Td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <Td>
+                  <b>Name</b>
+                </Td>
+                <Td>
+                  <b>Country</b>
+                </Td>
+              </tr>
+
+              <tr>
+                <Td>Phone</Td>
+                <Td>sdfsdf</Td>
+              </tr>
+              <tr>
+                <Td>
+                  <b>Email</b>
+                </Td>
+                <Td>
+                  <b>Phone</b>
+                </Td>
+              </tr>
+              <tr>
+                <Td>dsfsdf</Td>
+                <Td>sdfsdf</Td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <Td colSpan={2}>
+                  <b>Address</b>
+                </Td>
+              </tr>
+              <tr>
+                <Td colSpan={2}>sdfsdf</Td>
+              </tr>
+            </tfoot>
+          </Table>
+        </Col>
+        <Col span={13}>
+          <Card
+            style={{ width: "100%" }}
+            // title="Card title"
+            // extra={<a href="#">More</a>}
+            tabList={tabList}
+            activeTabKey={activeTabKey1}
+            onTabChange={(key: string) => {
+              onTab1Change(key);
+            }}
+          >
+            {contentList[activeTabKey1]}
+          </Card>
+        </Col>
+      </Row>
     </DashBoard>
   );
 }
