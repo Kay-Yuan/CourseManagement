@@ -226,11 +226,12 @@ export default function StudentIndex() {
         destroyOnClose
       >
         <Form
-          // form={form}
+          form={form}
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
           layout="horizontal"
           onFinish={handleAdd}
+          preserve={false}
         >
           <Form.Item
             name="name"

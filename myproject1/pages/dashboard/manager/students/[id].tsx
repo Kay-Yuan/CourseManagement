@@ -3,13 +3,15 @@ import { getPostData } from "../../../../lib/services/student";
 
 // import utilStyles from "../../styles/utils.module.css";
 import DashBoard from "../../../../components/layouts/dashboard";
-import { Breadcrumb, Card, Col, Row } from "antd";
+import { Avatar, Breadcrumb, Card, Col, Row } from "antd";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { wrap } from "module";
 import { BlockList } from "net";
 import { useRouter } from "next/router";
+import { StudentInDetail } from "../../../../lib/model/student";
+import { getService } from "../../../../lib/services/api-services";
 
 // export function getStaticProps({ params }: { params: any }) {
 //   //   const postData = await getPostData(params.id);
@@ -53,19 +55,86 @@ const tabList = [
   },
 ];
 
-const contentList: { [key: string]: any } = {
-  about: <p>About</p>,
-  courses: <p>Courses</p>,
-};
+// const aboutContent = Object.keys(obj).map(key =>{
+//   const col = document.createElement('Col');
+//   const clone = col.cloneNode();
+//   clone.textContent = key + ':';
+//   return clone;
+// });
+
 export default function Post() {
   const [activeTabKey1, setActiveTabKey1] = useState("about");
   const router = useRouter();
   const { id } = router.query;
-  //   useEffect((id: string) => {
-  //     // async function fetchData() {}
-  //     // fetchData();
-  //     console.log("id is " + id);
-  //   }, []);
+  const [data, setData] = useState<StudentInDetail>();
+
+  const contentList: { [key: string]: any } = {
+    about: (
+      <p>
+        <h1 style={{ color: "dodgerblue" }}>Information</h1>
+        <Row>
+          <Col span={4}>
+            <b>Education:</b>
+          </Col>
+          <Col span={20}>{data?.education}</Col>
+        </Row>
+        <Row>
+          <Col span={4}>
+            <b>Area:</b>
+          </Col>
+          <Col span={20}>{data?.country}</Col>
+        </Row>
+        <Row>
+          <Col span={4}>
+            <b>Gender:</b>
+          </Col>
+          <Col span={20}>{data?.gender}</Col>
+        </Row>
+        <Row>
+          <Col span={4}>
+            <b>Member&nbsp;Period:</b>
+          </Col>
+          <Col span={20}>
+            {/* {data?.memberStartAt} ~ {data?.memberEndAt} */}
+          </Col>
+        </Row>
+        <Row>
+          <Col span={4}>
+            <b>Type:</b>
+          </Col>
+          <Col span={20}>{data?.type}</Col>
+        </Row>
+        <Row>
+          <Col span={4}>
+            <b>Create&nbsp;Time:</b>
+          </Col>
+          {/* <Col span={20}>{data?.createdAt}</Col> */}
+        </Row>
+        <Row>
+          <Col span={4}>
+            <b>Update&nbsp;Time:</b>
+          </Col>
+          {/* <Col span={20}>{data?.updatedAt}</Col> */}
+        </Row>
+        <h1 style={{ color: "dodgerblue" }}>Interesting</h1>
+        hi
+        <h1 style={{ color: "dodgerblue" }}>Description</h1>
+        hi
+      </p>
+    ),
+    courses: <p>Courses</p>,
+  };
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    async function fetchData() {
+      const response = await getService(`/students/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setData(response.data);
+    }
+    fetchData();
+    console.log("id is " + id);
+  }, [id]);
 
   const onTab1Change = (key: string) => {
     setActiveTabKey1(key);
@@ -91,65 +160,47 @@ export default function Post() {
           width: "auto",
           background: "white",
           justifyContent: "space-around",
+          padding: "1.5rem 0",
         }}
       >
         <Col span={9}>
-          <Table>
-            <thead>
-              <tr>
-                <Td colSpan={2}>
-                  <div
-                    style={{
-                      width: "100px",
-                      height: "100px",
-                      background: "grey",
-                      borderRadius: "50%",
-                      margin: "1em auto",
-
-                      //   border: "3px solid grey",
-                    }}
-                  ></div>
-                </Td>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <Td>
-                  <b>Name</b>
-                </Td>
-                <Td>
-                  <b>Country</b>
-                </Td>
-              </tr>
-
-              <tr>
-                <Td>Phone</Td>
-                <Td>sdfsdf</Td>
-              </tr>
-              <tr>
-                <Td>
-                  <b>Email</b>
-                </Td>
-                <Td>
-                  <b>Phone</b>
-                </Td>
-              </tr>
-              <tr>
-                <Td>dsfsdf</Td>
-                <Td>sdfsdf</Td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr>
-                <Td colSpan={2}>
-                  <b>Address</b>
-                </Td>
-              </tr>
-              <tr>
-                <Td colSpan={2}>sdfsdf</Td>
-              </tr>
-            </tfoot>
-          </Table>
+          <Card
+            title={<Avatar size={100} shape="circle" />}
+            style={{ textAlign: "center" }}
+          >
+            <Row>
+              <Col span={12}>
+                <b>Name</b>
+              </Col>
+              <Col span={12}>
+                <b>Age</b>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={12}>{data?.name}</Col>
+              <Col span={12}>{data?.age}</Col>
+            </Row>
+            <Row>
+              <Col span={12}>
+                <b>Email</b>
+              </Col>
+              <Col span={12}>
+                <b>Phone</b>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={12}>{data?.email}</Col>
+              <Col span={12}>{data?.phone}</Col>
+            </Row>
+            <Row>
+              <Col span={24}>
+                <b>Address</b>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={24}>{data?.address}</Col>
+            </Row>
+          </Card>
         </Col>
         <Col span={13}>
           <Card

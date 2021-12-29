@@ -85,3 +85,34 @@ export interface StudentInList extends StudentBase {
   studentType?: string | undefined;
   joinTime?: string | undefined;
 }
+
+export interface Address {
+  place: string;
+}
+
+interface StudentDetailCourseType {
+  id: number;
+  name: string;
+}
+
+interface StudentDetailCourse extends Course {
+  courseDate: string;
+  createdAt: string;
+  studentId: number;
+  type: StudentDetailCourseType[];
+  updatedAt: string;
+}
+
+export interface StudentInDetail extends Student {
+  address: Address[];
+  age: number;
+  avatar: string;
+  description: string;
+  education: string;
+  gender: number;
+  interest: string[];
+  memberEndAt: string;
+  memberStartAt: string;
+  phone: string;
+  courses: StudentDetailCourse[];
+}
