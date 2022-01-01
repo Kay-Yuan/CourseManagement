@@ -6,6 +6,7 @@ import {
   StudentInList,
   StudentResponse,
 } from "../model/student";
+import { Teacher, TeacherInList, TeacherResponse } from "../model/teacher";
 
 export function processCourses(
   res: AxiosResponse<any, any>
@@ -25,13 +26,13 @@ export function processCourses(
   return courses;
 }
 
-export function processStudentData(
+export function processTeacherData(
   res: AxiosResponse<any, any>
-): StudentInList[] {
-  const rows: StudentInList[] = [];
-  let value: StudentResponse = res.data;
+): TeacherInList[] {
+  const rows: TeacherInList[] = [];
+  let value: TeacherResponse = res.data;
 
-  const students: Student[] = value.students;
+  const teachers: Teacher[] = value.teachers;
   // console.log("student is ", students);
   const calculateJoinTime = (joinTime: string): string => {
     const now = new Date();
@@ -47,17 +48,15 @@ export function processStudentData(
     }
     return "No record.";
   };
-  students.forEach((student) => {
-    const row: StudentInList = {
-      id: student.id,
-      name: student.name,
-      area: student.country,
-      email: student.email,
-      selectedCurriculum: student.courses
-        ?.map((course) => course.name)
-        .join(","),
-      studentType: student.type?.name,
-      joinTime: calculateJoinTime(student.createdAt),
+  teachers.forEach((teacher) => {
+    const row: TeacherInList = {
+      id: teacher.id,
+      name: teacher.name,
+      country: teacher.country,
+      email: teacher.email,
+      skill: teacher.skills.map((item) => item.name).join(","),
+      courseAmount: teacher.courseAmount,
+      phone: teacher.phone,
     };
     rows.push(row);
   });
@@ -65,23 +64,3 @@ export function processStudentData(
 }
 
 export async function getStudentDetail(id: string) {}
-// export async function getPostData(id) {
-//   const fullPath = path.join(postsDirectory, `${id}.md`);
-//   const fileContents = fs.readFileSync(fullPath, "utf8");
-
-//   // Use gray-matter to parse the post metadata section
-//   const matterResult = matter(fileContents);
-
-//   // Use remark to convert markdown into HTML string
-//   const processedContent = await remark()
-//     .use(html)
-//     .process(matterResult.content);
-//   const contentHtml = processedContent.toString();
-
-//   // Combine the data with the id
-//   return {
-//     id,
-//     contentHtml,
-//     ...matterResult.data,
-//   };
-// }

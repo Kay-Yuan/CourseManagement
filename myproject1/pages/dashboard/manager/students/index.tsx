@@ -23,15 +23,11 @@ import {
   userInfo,
   getService,
 } from "../../../../lib/services/api-services";
-import {
-  ColumnGroupType,
-  ColumnType,
-  TablePaginationConfig,
-} from "antd/lib/table";
-import { FilterValue, SorterResult } from "antd/lib/table/interface";
+import { TablePaginationConfig } from "antd/lib/table";
+
 import { processStudentData } from "../../../../lib/services/student";
 import studentStyle from "../../../../components/layouts/layout.module.css";
-import SearchOutlined from "@ant-design/icons/lib/icons/SearchOutlined";
+
 import Link from "next/link";
 
 export default function StudentIndex() {
@@ -51,7 +47,7 @@ export default function StudentIndex() {
         const response = await getService("/students?page=1&limit=10", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setPagination({ ...pagination, total: response.data.total });
+        setPagination({ current: 1, pageSize: 10, total: response.data.total });
         const rows: StudentInList[] = processStudentData(response);
         setData(rows);
       } catch (error) {
@@ -122,15 +118,15 @@ export default function StudentIndex() {
   //   },
   // ];
 
-  function getRandomuserParams(params: {
-    pagination: { pageSize: number; current: number };
-  }) {
-    return {
-      // results: params.pagination.pageSize,
-      // page: params.pagination.current,
-      ...params,
-    };
-  }
+  // function getRandomuserParams(params: {
+  //   pagination: { pageSize: number; current: number };
+  // }) {
+  //   return {
+  //     // results: params.pagination.pageSize,
+  //     // page: params.pagination.current,
+  //     ...params,
+  //   };
+  // }
 
   const handleTableChange = (
     pagination: TablePaginationConfig
@@ -168,9 +164,23 @@ export default function StudentIndex() {
   };
 
   const { Search } = Input;
-  const onSearch = (value: string) => {
+  async function onSearch(value: string) {
     console.log(value);
-  };
+    const token = localStorage.getItem("token");
+    setIsLoading(true);
+    const pageConfig = `page=${pagination.current}&limit=${pagination.pageSize}`;
+    const res = await getService(`/students?${pageConfig}&query=${value}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    console.log("res is " + res);
+    setPagination({ ...pagination, total: res.data.total });
+    // const rows: StudentInList[] = processStudentData(res).filter((item) =>
+    //   item.name.includes(value)
+    // );
+    const rows: StudentInList[] = processStudentData(res);
+    setData(rows);
+    setIsLoading(false);
+  }
 
   const onAddChange = () => {};
 
@@ -329,7 +339,7 @@ export default function StudentIndex() {
             { text: "Developer", value: "developer" },
           ]}
           onFilter={(value, record: StudentInList) =>
-            record.studentType?.indexOf(value) === 0
+            record.studentType === value
           }
         />
         <Table.Column<StudentInList>
