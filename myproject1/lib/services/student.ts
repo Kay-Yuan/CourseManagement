@@ -1,10 +1,31 @@
 import { AxiosResponse } from "axios";
-import { Student, StudentInList, StudentResponse } from "../model/student";
-// import fs from "fs";
-// import path from "path";
-// import matter from "gray-matter";
-// import { remark } from "remark";
-// import html from "remark-html";
+import {
+  CourseInDetailTable,
+  Student,
+  StudentDetailCourse,
+  StudentInList,
+  StudentResponse,
+} from "../model/student";
+
+export function processCourses(
+  response: AxiosResponse<any, any>
+): CourseInDetailTable[] {
+  let courses: CourseInDetailTable[] = [];
+  response.data.courses.forEach(
+    (course: StudentDetailCourse, index: number) => {
+      const eachCourse = {
+        // key: course.id,
+        courseId: course.courseId,
+        id: index + 1,
+        name: course.name,
+        type: course.type[0] ? course.type[0].name : "",
+        joinTime: course.createdAt,
+      };
+      courses.push(eachCourse);
+    }
+  );
+  return courses;
+}
 
 export function processStudentData(
   res: AxiosResponse<any, any>

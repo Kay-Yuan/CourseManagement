@@ -1,49 +1,18 @@
-import { getPostData } from "../../../../lib/services/student";
-// import Head from "next/head";
+import { processCourses } from "../../../../lib/services/student";
 
-// import utilStyles from "../../styles/utils.module.css";
 import DashBoard from "../../../../components/layouts/dashboard";
-import { Avatar, Breadcrumb, Card, Col, Row } from "antd";
+import { Avatar, Breadcrumb, Card, Col, Row, Space, Tag } from "antd";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import styled from "styled-components";
-import { wrap } from "module";
-import { BlockList } from "net";
+
 import { useRouter } from "next/router";
-import { StudentInDetail } from "../../../../lib/model/student";
+import {
+  CourseInDetailTable,
+  StudentInDetail,
+} from "../../../../lib/model/student";
 import { getService } from "../../../../lib/services/api-services";
+import Table, { ColumnType } from "antd/lib/table";
 
-// export function getStaticProps({ params }: { params: any }) {
-//   //   const postData = await getPostData(params.id);
-//   const id = params.id;
-//   return {
-//     props: {
-//       id,
-//     },
-//   };
-// }
-
-// export async function getStaticPaths() {
-//   const paths = getAllPostIds();
-//   return {
-//     paths,
-//     fallback: false,
-//   };
-// }
-const Table = styled.table`
-  width: 100%;
-  border: 1px solid black;
-  align-self: auto;
-`;
-const Td = styled.td`
-  width: 50%;
-  border: 1px solid black;
-  text-align: center;
-  align-items: center;
-  align-content: center;
-  margin: auto;
-`;
-// params?
 const tabList = [
   {
     key: "about",
@@ -55,18 +24,73 @@ const tabList = [
   },
 ];
 
-// const aboutContent = Object.keys(obj).map(key =>{
-//   const col = document.createElement('Col');
-//   const clone = col.cloneNode();
-//   clone.textContent = key + ':';
-//   return clone;
-// });
+const tagColor = [
+  "magenta",
+  "red",
+  "volcano",
+  "orange",
+  "gold",
+  "lime",
+  "green",
+  "cyan",
+  "blue",
+  "geekbule",
+  "purple",
+];
 
 export default function Post() {
   const [activeTabKey1, setActiveTabKey1] = useState("about");
   const router = useRouter();
   const { id } = router.query;
   const [data, setData] = useState<StudentInDetail>();
+  const [courseTabelData, setCourseTabelData] =
+    useState<CourseInDetailTable[]>();
+
+  useEffect(() => {
+    if (id === undefined) return;
+    const token = localStorage.getItem("token");
+    async function fetchData() {
+      const response = await getService(`/students/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setData(response.data);
+      const courses: CourseInDetailTable[] = processCourses(response);
+
+      setCourseTabelData(courses);
+    }
+    fetchData();
+    console.log("id is " + id);
+  }, [id]);
+
+  const columns: ColumnType<CourseInDetailTable>[] = [
+    {
+      title: "No.",
+      dataIndex: "id",
+      key: "id",
+      // sorter: true,
+    },
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      render: (value) => (
+        <Space size="middle">
+          <a>{value}</a>
+        </Space>
+      ),
+      // sorter: true,
+    },
+    {
+      title: "Type",
+      dataIndex: "type",
+      key: "type",
+    },
+    {
+      title: "Join Time",
+      dataIndex: "joinTime",
+      key: "joinTime",
+    },
+  ];
 
   const contentList: { [key: string]: any } = {
     about: (
@@ -88,54 +112,61 @@ export default function Post() {
           <Col span={4}>
             <b>Gender:</b>
           </Col>
-          <Col span={20}>{data?.gender}</Col>
+          <Col span={20}>{data?.gender === 2 ? "Female" : "male"}</Col>
         </Row>
         <Row>
           <Col span={4}>
             <b>Member&nbsp;Period:</b>
           </Col>
           <Col span={20}>
-            {/* {data?.memberStartAt} ~ {data?.memberEndAt} */}
+            {data?.memberEndAt} ~ {data?.memberStartAt}
           </Col>
         </Row>
         <Row>
           <Col span={4}>
             <b>Type:</b>
           </Col>
-          <Col span={20}>{data?.type}</Col>
+          <Col span={20}>{data?.type?.name}</Col>
         </Row>
         <Row>
           <Col span={4}>
             <b>Create&nbsp;Time:</b>
           </Col>
-          {/* <Col span={20}>{data?.createdAt}</Col> */}
+          <Col span={20}>{data?.createdAt}</Col>
         </Row>
         <Row>
           <Col span={4}>
             <b>Update&nbsp;Time:</b>
           </Col>
-          {/* <Col span={20}>{data?.updatedAt}</Col> */}
+          <Col span={20}>{data?.updatedAt}</Col>
         </Row>
         <h1 style={{ color: "dodgerblue" }}>Interesting</h1>
-        hi
+        <section style={{ margin: "0 0 1rem 0" }}>
+          {data?.interest.map((interest, key) => {
+            return (
+              <Tag
+                key={key}
+                color={
+                  tagColor[data.interest.indexOf(interest) % tagColor.length]
+                }
+              >
+                {interest}
+              </Tag>
+            );
+          })}
+        </section>
         <h1 style={{ color: "dodgerblue" }}>Description</h1>
-        hi
+        {data?.description}
       </p>
     ),
-    courses: <p>Courses</p>,
+    courses: (
+      <Table
+        columns={columns}
+        dataSource={courseTabelData}
+        rowKey={(row: CourseInDetailTable) => row.id}
+      />
+    ),
   };
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    async function fetchData() {
-      const response = await getService(`/students/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setData(response.data);
-    }
-    fetchData();
-    console.log("id is " + id);
-  }, [id]);
-
   const onTab1Change = (key: string) => {
     setActiveTabKey1(key);
   };

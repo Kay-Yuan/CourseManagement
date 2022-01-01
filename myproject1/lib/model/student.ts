@@ -95,12 +95,18 @@ interface StudentDetailCourseType {
   name: string;
 }
 
-interface StudentDetailCourse extends Course {
+export interface StudentDetailCourse extends Course {
   courseDate: string;
   createdAt: string;
   studentId: number;
   type: StudentDetailCourseType[];
   updatedAt: string;
+}
+
+export interface CourseInDetailTable extends Course {
+  // key: number;
+  type: string;
+  joinTime: string;
 }
 
 export interface StudentInDetail extends Student {

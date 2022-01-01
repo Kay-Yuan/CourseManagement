@@ -308,9 +308,7 @@ export default function StudentIndex() {
             { text: "China", value: "China" },
             { text: "Australia", value: "Australia" },
           ]}
-          onFilter={(value, record: StudentInList) =>
-            record.area?.indexOf(value) === 0
-          }
+          onFilter={(value, record: StudentInList) => record.area === value}
         />
         <Table.Column<StudentInList>
           title="Email"
