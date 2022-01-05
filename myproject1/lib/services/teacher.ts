@@ -54,7 +54,7 @@ export function processTeacherData(
       name: teacher.name,
       country: teacher.country,
       email: teacher.email,
-      skill: teacher.skills.map((item) => item.name).join(","),
+      skill: teacher.skills.map((item: any) => item.name).join(", "),
       courseAmount: teacher.courseAmount,
       phone: teacher.phone,
     };

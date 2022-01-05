@@ -1,7 +1,7 @@
 import { processCourses } from "../../../../lib/services/student";
 
 import DashBoard from "../../../../components/layouts/dashboard";
-import { Avatar, Breadcrumb, Card, Col, Row, Space, Tag } from "antd";
+import { Avatar, Breadcrumb, Card, Col, Rate, Row, Space, Tag } from "antd";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -12,6 +12,7 @@ import {
 } from "../../../../lib/model/student";
 import { getService } from "../../../../lib/services/api-services";
 import Table, { ColumnType } from "antd/lib/table";
+import { TeacherInDetail } from "../../../../lib/model/teacher";
 
 const tabList = [
   {
@@ -42,7 +43,7 @@ export default function Post() {
   const [activeTabKey1, setActiveTabKey1] = useState("about");
   const router = useRouter();
   const { id } = router.query;
-  const [data, setData] = useState<StudentInDetail>();
+  const [data, setData] = useState<TeacherInDetail>();
   const [courseTabelData, setCourseTabelData] =
     useState<CourseInDetailTable[]>();
 
@@ -50,13 +51,13 @@ export default function Post() {
     if (id === undefined) return;
     const token = localStorage.getItem("token");
     async function fetchData() {
-      const response = await getService(`/students/${id}`, {
+      const response = await getService(`/teachers/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setData(response.data);
-      const courses: CourseInDetailTable[] = processCourses(response);
+      //   const courses: CourseInDetailTable[] = processCourses(response);
 
-      setCourseTabelData(courses);
+      //   setCourseTabelData(courses);
     }
     fetchData();
     console.log("id is " + id);
@@ -98,36 +99,18 @@ export default function Post() {
         <h1 style={{ color: "dodgerblue" }}>Information</h1>
         <Row>
           <Col span={4}>
-            <b>Education:</b>
+            <b>Birthday:</b>
           </Col>
-          <Col span={20}>{data?.education}</Col>
+          <Col span={20}>{data?.profile.birthday}</Col>
         </Row>
-        <Row>
-          <Col span={4}>
-            <b>Area:</b>
-          </Col>
-          <Col span={20}>{data?.country}</Col>
-        </Row>
+
         <Row>
           <Col span={4}>
             <b>Gender:</b>
           </Col>
-          <Col span={20}>{data?.gender === 2 ? "Female" : "male"}</Col>
+          <Col span={20}>{data?.profile.gender === 2 ? "Female" : "male"}</Col>
         </Row>
-        <Row>
-          <Col span={4}>
-            <b>Member&nbsp;Period:</b>
-          </Col>
-          <Col span={20}>
-            {data?.memberEndAt} ~ {data?.memberStartAt}
-          </Col>
-        </Row>
-        <Row>
-          <Col span={4}>
-            <b>Type:</b>
-          </Col>
-          <Col span={20}>{data?.type?.name}</Col>
-        </Row>
+
         <Row>
           <Col span={4}>
             <b>Create&nbsp;Time:</b>
@@ -140,30 +123,42 @@ export default function Post() {
           </Col>
           <Col span={20}>{data?.updatedAt}</Col>
         </Row>
-        <h1 style={{ color: "dodgerblue" }}>Interesting</h1>
+        <h1 style={{ color: "dodgerblue" }}>Skills</h1>
         <section style={{ margin: "0 0 1rem 0" }}>
-          {data?.interest.map((interest, key) => {
+          {data?.skills.map((skill, key) => {
             return (
-              <Tag
-                key={key}
-                color={
-                  tagColor[data.interest.indexOf(interest) % tagColor.length]
-                }
-              >
-                {interest}
-              </Tag>
+              <Row key={key}>
+                <Col
+                  className="gutter-row"
+                  span={4}
+                  style={{ padding: "0.5rem" }}
+                >
+                  <b>{skill.name}:</b>
+                </Col>
+                <Col className="gutter-row" span={8}>
+                  <Rate disabled allowHalf defaultValue={skill.level} />
+                </Col>
+              </Row>
             );
           })}
         </section>
         <h1 style={{ color: "dodgerblue" }}>Description</h1>
-        {data?.description}
+        {data?.profile.description}
+        <h1 style={{ color: "dodgerblue" }}>Education</h1>
+        <Table<TeacherInDetail>
+        //   dataSource={data}
+        //   loading={isLoading}
+        //   onChange={handleTableChange}
+        //   pagination={pagination}
+        //   rowKey={(row: TeacherInDetail) => row.id}
+        />
       </p>
     ),
     courses: (
       <Table
-        columns={columns}
-        dataSource={courseTabelData}
-        rowKey={(row: CourseInDetailTable) => row.id}
+      // columns={columns}
+      // dataSource={courseTabelData}
+      // rowKey={(row: CourseInDetailTable) => row.id}
       />
     ),
   };
@@ -175,13 +170,13 @@ export default function Post() {
       <Breadcrumb style={{ margin: "16px 0" }}>
         <Breadcrumb.Item>CMS MANAGER SYSTEM</Breadcrumb.Item>
         <Breadcrumb.Item>
-          <Link href="/dashboard/manager">
-            <a>Student</a>
+          <Link href="/dashboard/teachers">
+            <a>Teacher</a>
           </Link>
         </Breadcrumb.Item>
         <Breadcrumb.Item>
-          <Link href="/dashboard/manager/students">
-            <a>Student List</a>
+          <Link href="/dashboard/manager/teachers">
+            <a>Teacher List</a>
           </Link>
         </Breadcrumb.Item>
         <Breadcrumb.Item></Breadcrumb.Item>
@@ -204,12 +199,12 @@ export default function Post() {
                 <b>Name</b>
               </Col>
               <Col span={12}>
-                <b>Age</b>
+                <b>Country</b>
               </Col>
             </Row>
             <Row>
               <Col span={12}>{data?.name}</Col>
-              <Col span={12}>{data?.age}</Col>
+              <Col span={12}>{data?.country}</Col>
             </Row>
             <Row>
               <Col span={12}>
@@ -229,7 +224,7 @@ export default function Post() {
               </Col>
             </Row>
             <Row>
-              <Col span={24}>{data?.address}</Col>
+              <Col span={24}>{data?.profile.address.join(" ")}</Col>
             </Row>
           </Card>
         </Col>

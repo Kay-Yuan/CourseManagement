@@ -1,6 +1,7 @@
 import DashBoard from "../../../../components/layouts/dashboard";
 import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   Space,
   Breadcrumb,
@@ -16,6 +17,7 @@ import {
   Popconfirm,
   Col,
   Row,
+  Slider,
 } from "antd";
 import studentStyle from "../../../../components/layouts/layout.module.css";
 import { ResponsePaginator } from "../../../../lib/model/response";
@@ -41,35 +43,18 @@ export default function TeachersIndex() {
   useEffect(() => {
     async function fetchData() {
       const token = localStorage.getItem("token");
-      let value: TeacherResponse;
-      const rows: any = [];
 
       try {
-        const response: AxiosResponse = await axios.get(
-          "http://ec2-13-239-60-161.ap-southeast-2.compute.amazonaws.com:3001/api/teachers?page=1&limit=20",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        value = response.data.data;
-        console.log(value);
-
-        const teachers: Teacher[] = value?.teachers;
-        console.log("teachers is ", teachers);
-
-        teachers.forEach((teacher) => {
-          const obj: TeacherInList = {
-            id: teacher.id,
-            name: teacher.name,
-            country: teacher.country,
-            email: teacher.email,
-            skill: teacher.skills.map((item: any) => item.name).join(", "),
-            courseAmount: teacher.courseAmount,
-            phone: teacher.phone,
-          };
-          // console.log(obj);
-          rows.push(obj);
+        const response = await getService("/teachers?page=1&limit=10", {
+          headers: { Authorization: `Bearer ${token}` },
         });
+
+        setPagination({
+          current: 1,
+          pageSize: 10,
+          total: response.data.total,
+        });
+        const rows: TeacherInList[] = processTeacherData(response);
         setData(rows);
       } catch (error) {
         console.log(error);
@@ -95,15 +80,12 @@ export default function TeachersIndex() {
       const token = localStorage.getItem("token");
       setIsLoading(true);
       // process pagination
-      // console.log(pagination);
       const pageConfig = `page=${pagination.current}&limit=${pagination.pageSize}`;
       try {
         const res = await getService(`/teachers?${pageConfig}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setPagination({ ...params.pagination, total: res.data.total });
-
-        // console.log("value is " + res.data);
         const rows: TeacherInList[] = processTeacherData(res);
         setData(rows);
       } catch (error) {
@@ -124,9 +106,7 @@ export default function TeachersIndex() {
     });
     console.log("res is " + res);
     setPagination({ ...pagination, total: res.data.total });
-    // const rows: StudentInList[] = processStudentData(res).filter((item) =>
-    //   item.name.includes(value)
-    // );
+
     const rows: TeacherInList[] = processTeacherData(res);
     setData(rows);
     setIsLoading(false);
@@ -231,12 +211,80 @@ export default function TeachersIndex() {
                 <Input allowClear style={{ width: "60%" }} defaultValue="" />
               </Input.Group>
             </Form.Item>
-            <Row>
+            <Form.Item name="skills" label="Skills" />
+            {/* <Row>
               <Col span={8}>
-                <Input defaultValue="C" disabled />
+                <Input disabled value={"C"} style={{ direction: "rtl" }} />
               </Col>
-              <Col span={16}></Col>
-            </Row>
+              <Col span={16}>
+                <Slider defaultValue={30} style={{ width: "100%" }} />
+              </Col>
+            </Row> */}
+            <Form.List
+              name="names"
+              rules={[
+                {
+                  validator: async (_, names) => {
+                    if (!names || names.length < 1) {
+                      return Promise.reject(new Error("At least 1 skill"));
+                    }
+                  },
+                },
+              ]}
+            >
+              {(fields, { add, remove }, { errors }) => (
+                <>
+                  {fields.map((field, index) => (
+                    <Form.Item
+                      // {...(index === 0
+                      //   ? formItemLayout
+                      //   : formItemLayoutWithOutLabel)}
+                      label={
+                        <Input
+                          defaultValue={"C"}
+                          style={{ direction: "rtl" }}
+                        />
+                      }
+                      required={false}
+                      key={field.key}
+                    >
+                      <Form.Item
+                        {...field}
+                        validateTrigger={["onChange", "onBlur"]}
+                        rules={[
+                          {
+                            // required: true,
+                            whitespace: true,
+                            message:
+                              "Please input skill's name or delete this field.",
+                          },
+                        ]}
+                        noStyle
+                      >
+                        <Slider defaultValue={30} style={{ width: "100%" }} />
+                      </Form.Item>
+                      {fields.length > 1 ? (
+                        <MinusCircleOutlined
+                          className="dynamic-delete-button"
+                          onClick={() => remove(field.name)}
+                        />
+                      ) : null}
+                    </Form.Item>
+                  ))}
+                  <Form.Item>
+                    <Button
+                      type="dashed"
+                      onClick={() => add()}
+                      style={{ width: "100%" }}
+                      icon={<PlusOutlined />}
+                    >
+                      Add field
+                    </Button>
+                    <Form.ErrorList errors={errors} />
+                  </Form.Item>
+                </>
+              )}
+            </Form.List>
           </Form>
         </Modal>
         <Table<TeacherInList>

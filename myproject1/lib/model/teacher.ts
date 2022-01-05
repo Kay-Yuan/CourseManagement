@@ -29,3 +29,18 @@ export interface TeacherInList {
   courseAmount: number;
   phone: string;
 }
+interface TeacherProfile {
+  createdAt: string;
+  updatedAt: string;
+  id: number;
+  address: string[];
+  gender: number;
+  birthday: string;
+  avatar: string;
+  description: string;
+}
+
+export interface TeacherInDetail extends Teacher {
+  profile: TeacherProfile;
+  profileId: number;
+}

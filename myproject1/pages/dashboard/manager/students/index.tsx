@@ -152,7 +152,6 @@ export default function StudentIndex() {
         });
         setPagination({ ...params.pagination, total: res.data.total });
 
-        // console.log("value is " + res.data);
         const rows: StudentInList[] = processStudentData(res);
         setData(rows);
       } catch (error) {
