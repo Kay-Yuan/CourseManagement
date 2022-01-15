@@ -1,27 +1,34 @@
 import axios, { AxiosPromise, AxiosResponse } from "axios";
-import { Cookies } from "react-cookie";
-import { useRouter } from "next/router";
-import { type } from "os";
 import { apiPath } from "./config";
 
-export function Logout() {
-  // const router = useRouter();
+// const token = localStorage.getItem("token");
 
-  axios
-    .post(apiPath + "/logout", "", {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    })
-    .then((response) => {
-      const status = response.data.msg;
-      if (status === "success") {
-        localStorage.removeItem("token");
-        localStorage.removeItem("userRole");
-        alert(`You have successfully logout.`);
+export function getService(endPoint: string): Promise<AxiosResponse<any>> {
+  const token = localStorage.getItem("token");
+  return axios.get(`${apiPath}${endPoint}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
 
-        // router.push("/");
-      }
-    })
-    .catch((err) => console.log(err));
+export function postService(
+  endpoint: string,
+  params?: object
+): Promise<AxiosResponse<any>> {
+  return axios.post(apiPath + endpoint, params ? params : "");
+}
+
+export function putService(
+  endpoint: string,
+  params?: object
+): Promise<AxiosResponse<any>> {
+  return axios.put(apiPath + endpoint, params ? params : "");
+}
+
+export function deleteService(endpoint: string): Promise<AxiosResponse<any>> {
+  const token = localStorage.getItem("token");
+  return axios.delete(`${apiPath}${endpoint}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 }
 
 export interface userInfo {
@@ -37,35 +44,6 @@ export async function Login(userInfo: userInfo): Promise<any> {
     .catch((err) => console.log(err));
 }
 
-export async function getService(
-  endpoint: string,
-  params?: object
-): Promise<AxiosResponse<any, any>> {
-  // const token = localStorage.getItem("token");
-  let path: string = apiPath + endpoint;
-  if (params) {
-    path = apiPath + endpoint;
-    return axios
-      .get(path, params)
-      .then((res: AxiosResponse) => res.data)
-      .catch((err) => console.log(err));
-  } else
-    return axios
-      .get(path, params)
-      .then((res: AxiosResponse) => res.data)
-      .catch((err) => console.log(err));
-}
-
-export async function postService(
-  endpoint: string,
-  params?: object
-): Promise<AxiosResponse<any, any>> {
-  // const token = localStorage.getItem("token");
-  return axios
-    .post(apiPath + endpoint, params ? params : "")
-    .then((res: AxiosResponse) => res.data)
-    .catch((err) => console.log(err));
-}
 // type IPath = (string | number)[] | string | number;
 
 // class BaseApiService {

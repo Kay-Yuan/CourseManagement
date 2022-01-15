@@ -1,3 +1,4 @@
+import { TablePaginationConfig } from "antd";
 import { AxiosResponse } from "axios";
 import {
   CourseInDetailTable,
@@ -7,10 +8,9 @@ import {
   StudentResponse,
 } from "../model/student";
 import { Teacher, TeacherInList, TeacherResponse } from "../model/teacher";
+import { getService } from "./api-services";
 
-export function processCourses(
-  res: AxiosResponse<any, any>
-): CourseInDetailTable[] {
+export function processCourses(res: AxiosResponse<any>): CourseInDetailTable[] {
   let courses: CourseInDetailTable[] = [];
   res.data.courses.forEach((course: StudentDetailCourse, index: number) => {
     const eachCourse = {
@@ -26,28 +26,60 @@ export function processCourses(
   return courses;
 }
 
-export function processTeacherData(
-  res: AxiosResponse<any, any>
-): TeacherInList[] {
+// export async function getStudentDetail(id: string) {}
+
+export async function getTeacherList(
+  query?: string,
+  page: number = 1,
+  limit: number = 10
+): Promise<any> {
+  let endPoint = `/teachers?page=${page}&limit=${limit}`;
+  let value: TeacherResponse;
+  const rows: TeacherInList[] = [];
+  endPoint = query ? endPoint + `&query=${query}` : endPoint;
+  // return await getService(endPoint).then((res)=>{
+
+  //   value = res.data.data;
+  // }).catch((err) => console.log(err)).
+  const res = await getService(endPoint);
+  value = res.data.data;
+  const teachers: Teacher[] = value.teachers;
+  teachers.forEach((teacher) => {
+    const row: TeacherInList = {
+      id: teacher.id,
+      name: teacher.name,
+      country: teacher.country,
+      email: teacher.email,
+      skill: teacher.skills.map((item: any) => item.name).join(", "),
+      courseAmount: teacher.courseAmount,
+      phone: teacher.phone,
+    };
+    rows.push(row);
+  });
+  return { data: rows, total: value.total };
+}
+
+export async function getTeacherResponse(
+  // page: number = 1,
+  // limit: number = 10,
+  pagination: TablePaginationConfig,
+  query?: string
+): Promise<any> {
+  let endPoint = `/teachers?page=${pagination.current}&limit=${pagination.pageSize}`;
+  endPoint = query ? endPoint + `&query=${query}` : endPoint;
+
+  return getService(endPoint)
+    .then((res) => res.data)
+    .catch((err) => console.log(err));
+}
+
+export function processTeacherData(res: AxiosResponse<any>): TeacherInList[] {
   const rows: TeacherInList[] = [];
   let value: TeacherResponse = res.data;
 
+  // console.log("student is ", value);
   const teachers: Teacher[] = value.teachers;
-  // console.log("student is ", students);
-  const calculateJoinTime = (joinTime: string): string => {
-    const now = new Date();
-    const then = new Date(joinTime);
-    const Difference_In_Time: number = now.getTime() - then.getTime();
-    // To calculate the no. of days between two dates
-    const years: number = Difference_In_Time / (1000 * 3600 * 24 * 30 * 12);
-    const almostYear: number = parseInt(years.toString()) + 1;
-    if (parseInt((years % 1).toFixed(2).substring(2)) >= 50) {
-      return "Almost " + almostYear + " years ago";
-    } else if (parseInt((years % 1).toFixed(2).substring(2)) < 50) {
-      return "Over " + parseInt(years.toString()) + " years ago";
-    }
-    return "No record.";
-  };
+
   teachers.forEach((teacher) => {
     const row: TeacherInList = {
       id: teacher.id,
@@ -62,5 +94,3 @@ export function processTeacherData(
   });
   return rows;
 }
-
-export async function getStudentDetail(id: string) {}

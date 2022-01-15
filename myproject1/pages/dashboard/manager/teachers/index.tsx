@@ -1,6 +1,6 @@
 import DashBoard from "../../../../components/layouts/dashboard";
 import axios, { AxiosResponse } from "axios";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   Space,
@@ -27,7 +27,11 @@ import {
   TeacherInList,
 } from "../../../../lib/model/teacher";
 import { getService } from "../../../../lib/services/api-services";
-import { processTeacherData } from "../../../../lib/services/teacher";
+import {
+  getTeacherList,
+  getTeacherResponse,
+  processTeacherData,
+} from "../../../../lib/services/teacher";
 import Link from "next/link";
 
 export default function TeachersIndex() {
@@ -35,80 +39,78 @@ export default function TeachersIndex() {
 
   const [data, setData] = useState<TeacherInList[]>();
   const [isLoading, setIsLoading] = useState(false);
-  const [pagination, setPagination] = useState<PaginationProps>({});
+  const [pagination, setPagination] = useState<TablePaginationConfig>({
+    current: 1,
+    pageSize: 10,
+    total: 310,
+  });
+  // const [total, setTotal] = useState<number>(0);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [form] = Form.useForm();
   const [title, setTitle] = useState("");
+  const [query, setQuery] = useState<string>();
   const { Search } = Input;
-  useEffect(() => {
-    async function fetchData() {
-      const token = localStorage.getItem("token");
 
-      try {
-        const response = await getService("/teachers?page=1&limit=10", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        setPagination({
-          current: 1,
-          pageSize: 10,
-          total: response.data.total,
-        });
-        const rows: TeacherInList[] = processTeacherData(response);
-        setData(rows);
-      } catch (error) {
-        console.log(error);
-      }
+  async function fetchData(query?: string) {
+    try {
+      const response = query
+        ? await getTeacherResponse(pagination, query)
+        : await getTeacherResponse(pagination);
+      // const response = await getTeacherResponse();
+      // console.log(response);
+      // setPagination({
+      //   ...pagination,
+      //   total: response.data.total,
+      // });
+      // setTotal(response.data.total);
+      const rows: TeacherInList[] = processTeacherData(response);
+      setData(rows);
+    } catch (error) {
+      console.log(error);
     }
+  }
 
-    fetchData();
-  }, []);
+  useEffect(() => {
+    fetchData(query);
+  }, [query, pagination]);
+
+  // useEffect(() => {
+  //   fetchData(query);
+  // }, [pagination]);
 
   const handleTableChange = (
     pagination: TablePaginationConfig
     // filters: Record<string, FilterValue | null>,
     // sorter: SorterResult<Student> | SorterResult<Student>[]
   ): void => {
-    fetch({
-      // sortField: sorter.field,
-      // sortOrder: sorter.order,
-      pagination,
-      // ...filters,
-    });
+    // fetch({
+    //   // sortField: sorter.field,
+    //   // sortOrder: sorter.order,
+    //   pagination,
+    //   // ...filters,
+    // });
+    setPagination({ ...pagination });
+    // console.log(pagination);
+    fetchData(query);
 
-    async function fetch(params: any) {
-      const token = localStorage.getItem("token");
-      setIsLoading(true);
-      // process pagination
-      const pageConfig = `page=${pagination.current}&limit=${pagination.pageSize}`;
-      try {
-        const res = await getService(`/teachers?${pageConfig}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setPagination({ ...params.pagination, total: res.data.total });
-        const rows: TeacherInList[] = processTeacherData(res);
-        setData(rows);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
+    // function fetch(params: any) {
+    //   const token = localStorage.getItem("token");
+    //   setIsLoading(true);
+    //   console.log(pagination);
+    //   // process pagination
+    //   try {
+    //     fetchData();
+    //   } catch (error) {
+    //     console.log(error);
+    //   } finally {
+    //     setIsLoading(false);
+    //   }
+    // }
   };
 
   async function onSearch(value: string) {
-    console.log(value);
-    const token = localStorage.getItem("token");
     setIsLoading(true);
-    const pageConfig = `page=${pagination.current}&limit=${pagination.pageSize}`;
-    const res = await getService(`/teachers?${pageConfig}&query=${value}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log("res is " + res);
-    setPagination({ ...pagination, total: res.data.total });
-
-    const rows: TeacherInList[] = processTeacherData(res);
-    setData(rows);
+    setQuery(value);
     setIsLoading(false);
   }
 
@@ -145,6 +147,7 @@ export default function TeachersIndex() {
             placeholder="input search text"
             allowClear
             onSearch={onSearch}
+            enterButton
             style={{ width: 300 }}
           />
         </div>
@@ -242,7 +245,7 @@ export default function TeachersIndex() {
                       label={
                         <Input
                           defaultValue={"C"}
-                          style={{ direction: "rtl" }}
+                          style={{ textAlign: "right" }}
                         />
                       }
                       required={false}
@@ -261,7 +264,12 @@ export default function TeachersIndex() {
                         ]}
                         noStyle
                       >
-                        <Slider defaultValue={30} style={{ width: "100%" }} />
+                        <Slider
+                          min={1}
+                          max={5}
+                          step={1}
+                          style={{ width: "100%" }}
+                        />
                       </Form.Item>
                       {fields.length > 1 ? (
                         <MinusCircleOutlined

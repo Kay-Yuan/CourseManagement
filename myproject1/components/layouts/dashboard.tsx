@@ -96,13 +96,32 @@ export default function DashBoard({ children }: any): JSX.Element {
           <SubMenu key="sub3" icon={<TeamOutlined />} title="Course">
             <Menu.Item
               key="4"
-              onClick={() => router.push(`/dashboard/manager/courses`)}
+              onClick={() =>
+                router.push(`/dashboard/manager/courses/allcourses`)
+              }
             >
-              Course List
+              All Courses
+            </Menu.Item>
+            <Menu.Item
+              key="5"
+              onClick={() =>
+                router.push(`/dashboard/manager/courses/addcourse`)
+              }
+            >
+              Add Course
+            </Menu.Item>
+            <Menu.Item
+              key="6"
+              onClick={() =>
+                router.push(`/dashboard/manager/courses/editcourse`)
+              }
+            >
+              Edit Course
             </Menu.Item>
           </SubMenu>
+
           <Menu.Item
-            key="5"
+            key="7"
             icon={<FileOutlined />}
             onClick={() => router.push(`/dashboard/manager/message`)}
           >
@@ -111,17 +130,6 @@ export default function DashBoard({ children }: any): JSX.Element {
         </Menu>
       </Sider>
       <Layout className="site-layout">
-        {/* <Header>
-            <div className={boardStyle.trigger} style={{ padding: 0 }}>
-              {React.createElement(
-                this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
-                {
-                  className: "trigger",
-                  onClick: this.toggle,
-                }
-              )}
-            </div> */}
-        {/* <Header> */}
         <Header className={boardStyle.header} style={{ padding: 0 }}>
           {React.createElement(
             collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
@@ -135,19 +143,7 @@ export default function DashBoard({ children }: any): JSX.Element {
             <Avatar className={boardStyle.avatar} icon={<UserOutlined />} />
           </Dropdown>
         </Header>
-        <Content style={{ margin: "0 16px" }}>
-          {/* <Breadcrumb style={{ margin: "16px 0" }}>
-              <Breadcrumb.Item>User</Breadcrumb.Item>
-              <Breadcrumb.Item>Bill</Breadcrumb.Item>
-            </Breadcrumb>
-            <div
-              className="site-layout-background"
-              style={{ padding: 24, minHeight: 360 }}
-            >
-              Bill is a cat.
-            </div> */}
-          {children}
-        </Content>
+        <Content style={{ margin: "0 16px" }}>{children}</Content>
         {/* <Footer style={{ textAlign: "center" }}>
             Ant Design ©2018 Created by Ant UED
           </Footer> */}
