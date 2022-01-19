@@ -1,11 +1,14 @@
+import { TablePaginationConfig } from "antd";
 import { AxiosResponse } from "axios";
 import {
   CourseInDetailTable,
   Student,
   StudentDetailCourse,
   StudentInList,
+  StudentQuery,
   StudentResponse,
 } from "../model/student";
+import { getService } from "./api-services";
 
 export function processCourses(
   res: AxiosResponse<any, any>
@@ -63,8 +66,25 @@ export function processStudentData(
   });
   return rows;
 }
+export async function getStudentResponse(
+  pagination: TablePaginationConfig,
+  query?: StudentQuery
+): Promise<any> {
+  let endPoint = `/students?page=${pagination.current}&limit=${pagination.pageSize}`;
+  if (query) {
+    if (query.name) endPoint += `&query=${query.name}`;
+    if (query.userId) endPoint += `&userId=${query.userId}`;
+  }
 
-export async function getStudentDetail(id: string) {}
+  return getService(endPoint)
+    .then((res) => res.data)
+    .catch((err) => console.log(err));
+}
+export async function getStudentDetail(id: any) {
+  return getService(`/students/${id}`)
+    .then((res) => res.data)
+    .catch((err) => console.log(err));
+}
 // export async function getPostData(id) {
 //   const fullPath = path.join(postsDirectory, `${id}.md`);
 //   const fileContents = fs.readFileSync(fullPath, "utf8");

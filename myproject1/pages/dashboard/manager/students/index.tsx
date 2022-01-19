@@ -17,15 +17,15 @@ import {
   StudentResponse,
   Student,
   StudentInList,
+  StudentQuery,
 } from "../../../../lib/model/student";
-import {
-  Login,
-  userInfo,
-  getService,
-} from "../../../../lib/services/api-services";
+
 import { TablePaginationConfig } from "antd/lib/table";
 
-import { processStudentData } from "../../../../lib/services/student";
+import {
+  getStudentResponse,
+  processStudentData,
+} from "../../../../lib/services/student";
 import studentStyle from "../../../../components/layouts/layout.module.css";
 
 import Link from "next/link";
@@ -33,31 +33,35 @@ import Link from "next/link";
 export default function StudentIndex() {
   const [data, setData] = useState<StudentInList[]>();
   const [isLoading, setIsLoading] = useState(false);
-  const [pagination, setPagination] = useState<PaginationProps>({});
+  const [pagination, setPagination] = useState<PaginationProps>({
+    current: 1,
+    pageSize: 10,
+  });
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [form] = Form.useForm();
   const [title, setTitle] = useState("");
-
+  const [total, setTotal] = useState<number>();
+  const [query, setQuery] = useState<StudentQuery>();
+  async function fetchData(query?: StudentQuery) {
+    // console.log(pagination);
+    setIsLoading(true);
+    try {
+      const response = query
+        ? await getStudentResponse(pagination, query)
+        : await getStudentResponse(pagination);
+      setTotal(response.data.total);
+      const rows: StudentInList[] = processStudentData(response);
+      setData(rows);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
   // DidMount
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    async function fetchData() {
-      setIsLoading(true);
-      try {
-        const response = await getService("/students?page=1&limit=10", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setPagination({ current: 1, pageSize: 10, total: response.data.total });
-        const rows: StudentInList[] = processStudentData(response);
-        setData(rows);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
+    fetchData(query);
+  }, [query, pagination]); // if no pagination, it will display the last pagination
 
   // const columns: ColumnType<Student>[] = [
   //   {
@@ -133,51 +137,18 @@ export default function StudentIndex() {
     // filters: Record<string, FilterValue | null>,
     // sorter: SorterResult<Student> | SorterResult<Student>[]
   ): void => {
-    fetch({
-      // sortField: sorter.field,
-      // sortOrder: sorter.order,
-      pagination,
-      // ...filters,
-    });
-
-    async function fetch(params: any) {
-      const token = localStorage.getItem("token");
-      setIsLoading(true);
-      // process pagination
-      // console.log(pagination);
-      const pageConfig = `page=${pagination.current}&limit=${pagination.pageSize}`;
-      try {
-        const res = await getService(`/students?${pageConfig}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setPagination({ ...params.pagination, total: res.data.total });
-
-        const rows: StudentInList[] = processStudentData(res);
-        setData(rows);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
+    // console.log(pagination);
+    setPagination(pagination);
+    fetchData(query);
   };
 
   const { Search } = Input;
   async function onSearch(value: string) {
-    console.log(value);
-    const token = localStorage.getItem("token");
     setIsLoading(true);
-    const pageConfig = `page=${pagination.current}&limit=${pagination.pageSize}`;
-    const res = await getService(`/students?${pageConfig}&query=${value}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log("res is " + res);
-    setPagination({ ...pagination, total: res.data.total });
-    // const rows: StudentInList[] = processStudentData(res).filter((item) =>
-    //   item.name.includes(value)
-    // );
-    const rows: StudentInList[] = processStudentData(res);
-    setData(rows);
+    if (isNaN(parseInt(value)) || isNaN(parseFloat(value)))
+      setQuery({ name: value });
+    else setQuery({ userId: parseInt(value) });
+    setPagination({ ...pagination, current: 1 });
     setIsLoading(false);
   }
 
@@ -290,7 +261,11 @@ export default function StudentIndex() {
         dataSource={data}
         loading={isLoading}
         onChange={handleTableChange}
-        pagination={pagination}
+        pagination={{
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+          total: total,
+        }}
         rowKey={(row: StudentInList) => row.id}
         scroll={{ y: 750 }}
       >

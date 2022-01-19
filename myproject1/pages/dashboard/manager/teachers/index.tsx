@@ -42,9 +42,8 @@ export default function TeachersIndex() {
   const [pagination, setPagination] = useState<TablePaginationConfig>({
     current: 1,
     pageSize: 10,
-    total: 310,
   });
-  // const [total, setTotal] = useState<number>(0);
+  const [total, setTotal] = useState<number>(0);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [form] = Form.useForm();
   const [title, setTitle] = useState("");
@@ -62,7 +61,7 @@ export default function TeachersIndex() {
       //   ...pagination,
       //   total: response.data.total,
       // });
-      // setTotal(response.data.total);
+      setTotal(response.data.total);
       const rows: TeacherInList[] = processTeacherData(response);
       setData(rows);
     } catch (error) {
@@ -73,10 +72,6 @@ export default function TeachersIndex() {
   useEffect(() => {
     fetchData(query);
   }, [query, pagination]);
-
-  // useEffect(() => {
-  //   fetchData(query);
-  // }, [pagination]);
 
   const handleTableChange = (
     pagination: TablePaginationConfig
@@ -111,6 +106,7 @@ export default function TeachersIndex() {
   async function onSearch(value: string) {
     setIsLoading(true);
     setQuery(value);
+    setPagination({ ...pagination, current: 1 });
     setIsLoading(false);
   }
 
@@ -299,7 +295,11 @@ export default function TeachersIndex() {
           dataSource={data}
           loading={isLoading}
           onChange={handleTableChange}
-          pagination={pagination}
+          pagination={{
+            current: pagination.current,
+            pageSize: pagination.pageSize,
+            total: total,
+          }}
           rowKey={(row: TeacherInList) => row.id}
         >
           <Table.Column<TeacherInList> title="No." dataIndex="id" key="id" />

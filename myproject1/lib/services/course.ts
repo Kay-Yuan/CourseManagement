@@ -1,91 +1,39 @@
 import axios, { AxiosPromise, AxiosResponse } from "axios";
-import { getCourseResponse } from "../model/course";
-import { postService } from "./api-services";
+import { CoursesQuery, getCourseResponse } from "../model/course";
+import { getService, postService } from "./api-services";
 import { apiPath } from "./config";
 
-const token = localStorage.getItem("token");
+// const token = localStorage.getItem("token");
 
-export function Logout() {
-  // const router = useRouter();
+export async function getCourseService(): Promise<AxiosResponse<any, any>> {
+// query?: CoursesQuery
+  let endPoint = "/courses";
+  // if (query) {
+  //   endPoint += "?";
+  //   if (query.page && query.limit)
+  //     endPoint += `&page=${query.page}&limit=${query.limit}`;
+  //   if (query.name) endPoint += `name=${query.name}`;
+  //   if (query.type) endPoint += `type=${query.type}`;
+  //   if (query.uid) endPoint += `uid=${query.uid}`;
+  //   if (query.userId) endPoint += `userId=${query.userId}`;
 
-  axios
-    .post(apiPath + "/logout", "", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    .then((response) => {
-      const status = response.data.msg;
-      if (status === "success") {
-        localStorage.removeItem("token");
-        localStorage.removeItem("userRole");
-        alert(`You have successfully logout.`);
+  // Object.
+  // solution 2
+  // for (const property:  in query) {
+  //     endPoint += `${property}=${query[property]}`
+  //   }
+  // }
 
-        // router.push("/");
-      }
-    })
-    .catch((err) => console.log(err));
-}
-
-export interface userInfo {
-  email: string;
-  password: string;
-  role: string;
-}
-
-export async function Login(userInfo: userInfo): Promise<any> {
-  return postService("/login", userInfo)
+  return getService(endPoint)
     .then((res) => res.data)
     .catch((err) => console.log(err));
 }
-
-export async function getService(
-  endpoint: string,
-  params?: object
+export async function getCourseDetailService(
+  id: string
 ): Promise<AxiosResponse<any, any>> {
-  // const token = localStorage.getItem("token");
-  let path: string = apiPath + endpoint;
-  if (params) {
-    path = apiPath + endpoint;
-    return axios
-      .get(path, params)
-      .then((res: AxiosResponse) => res.data)
-      .catch((err) => console.log(err));
-  } else
-    return axios
-      .get(path, params)
-      .then((res: AxiosResponse) => res.data)
-      .catch((err) => console.log(err));
-}
+  let endPoint = `/courses/detail?id=${id}`;
 
-// export async function postService(
-//   endpoint: string,
-//   params?: object
-// ): Promise<AxiosResponse<any, any>> {
-//   // const token = localStorage.getItem("token");
-//   return axios
-//     .post(apiPath + endpoint, params ? params : "")
-//     .then((res: AxiosResponse) => res.data)
-//     .catch((err) => console.log(err));
-// }
-
-export async function getCourseService(
-  endpoint: string,
-  params?: object
-): Promise<AxiosResponse<any, any>> {
-  // const path = `courses`;
-  // let value: getCourseResponse;
-  // return await getService(path)
-  //   .then(function (response: AxiosResponse) {
-  //     value = response.data.data.courses;
-  //     return value;
-  //     console.log(value);
-  //   })
-  //   .catch(function (error) {
-  //     // handle error
-  //     console.log(error);
-  //   });
-
-  return axios
-    .get(apiPath + endpoint, params)
-    .then((res: AxiosResponse) => res.data.data.courses)
+  return getService(endPoint)
+    .then((res) => res.data)
     .catch((err) => console.log(err));
 }

@@ -122,3 +122,8 @@ export interface StudentInDetail extends Student {
   phone: string;
   courses: StudentDetailCourse[];
 }
+
+export interface StudentQuery {
+  name?: string;
+  userId?: number;
+}

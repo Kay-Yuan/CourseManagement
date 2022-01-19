@@ -1,4 +1,7 @@
-import { processCourses } from "../../../../lib/services/student";
+import {
+  getStudentDetail,
+  processCourses,
+} from "../../../../lib/services/student";
 
 import DashBoard from "../../../../components/layouts/dashboard";
 import { Avatar, Breadcrumb, Card, Col, Row, Space, Tag } from "antd";
@@ -47,12 +50,10 @@ export default function Post() {
     useState<CourseInDetailTable[]>();
 
   useEffect(() => {
-    if (id === undefined) return;
+    if (!id) return;
     const token = localStorage.getItem("token");
     async function fetchData() {
-      const response = await getService(`/students/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await getStudentDetail(id);
       setData(response.data);
       const courses: CourseInDetailTable[] = processCourses(response);
 

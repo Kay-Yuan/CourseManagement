@@ -1,3 +1,5 @@
+import { Teacher } from "./teacher";
+
 export interface BriefCourse {
   id: number;
   courseId?: number;
@@ -7,6 +9,16 @@ interface CourseType {
   id: number;
   name: string;
 }
+
+export interface CoursesQuery {
+  page?: number;
+  limit?: number;
+  name?: string;
+  type?: string;
+  uid?: string;
+  userId?: string;
+}
+
 export interface getCourseResponse extends BriefCourse {
   cover: string;
   createdAt: string;
@@ -24,4 +36,41 @@ export interface getCourseResponse extends BriefCourse {
   type: CourseType[];
   uid: string;
   updatedAt: string;
+}
+
+export interface CourseDetail extends getCourseResponse {
+  teacher: Teacher;
+  schedule: Schedule;
+  sales: Sales;
+}
+
+interface Schedule {
+  createdAt: string;
+  updatedAt: string;
+  id: number;
+  status: number;
+  current: number;
+  classTime: string[];
+  chapters: Chapter[];
+}
+
+interface Chapter {
+  createdAt: string;
+  updatedAt: string;
+  id: number;
+  name: string;
+  order: number;
+  content: string;
+}
+
+interface Sales {
+  createdAt: string;
+  updatedAt: string;
+  id: number;
+  batches: number;
+  price: number;
+  earnings: number;
+  paidAmount: number;
+  studentAmount: number;
+  paidIds: string[];
 }
