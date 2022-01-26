@@ -6,6 +6,20 @@ import { Children } from "react";
 
 const { Meta } = Card;
 export default function CourseCard(props: any) {
+  const gridStyle: React.CSSProperties = {
+    width: "25%",
+    textAlign: "center",
+  };
+  let cardGrid = null;
+  if (props.grid) {
+    cardGrid = [
+      <Card.Grid style={gridStyle}>Content</Card.Grid>,
+      <Card.Grid style={gridStyle}>Content</Card.Grid>,
+      <Card.Grid style={gridStyle}>Content</Card.Grid>,
+      <Card.Grid style={gridStyle}>Content</Card.Grid>,
+    ];
+  }
+
   return (
     <Card
       // title={}
@@ -22,24 +36,24 @@ export default function CourseCard(props: any) {
         description={
           <>
             <Row>
-              <Col>{props.description.startTime}</Col>
+              <Col>{props.description?.startTime}</Col>
               <Col style={{ marginLeft: "auto" }}>
                 <HeartFilled style={{ color: "crimson" }} />{" "}
-                {props.description.star}
+                {props.description?.star}
               </Col>
             </Row>
             <hr />
             <Row>
               <Col> Duriation: </Col>
               <Col style={{ marginLeft: "auto" }}>
-                <b>{props.description.duration} years</b>
+                <b>{props.description?.duration} years</b>
               </Col>
             </Row>
             <hr />
             <Row>
               <Col>Teacher:</Col>
               <Col style={{ marginLeft: "auto", color: "dodgerblue" }}>
-                <b>{props.description.teacherName}</b>
+                <b>{props.description?.teacherName}</b>
               </Col>
             </Row>
             <hr />
@@ -51,12 +65,13 @@ export default function CourseCard(props: any) {
                 Student limit:
               </Col>
               <Col style={{ marginLeft: "auto" }}>
-                <b>{props.description.maxStudents}</b>
+                <b>{props.description?.maxStudents}</b>
               </Col>
             </Row>
           </>
         }
       />
+      {cardGrid}
     </Card>
   );
 }

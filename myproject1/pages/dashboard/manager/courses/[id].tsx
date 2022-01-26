@@ -9,17 +9,13 @@ import { CourseDetail } from "../../../../lib/model/course";
 import { getCourseDetailService } from "../../../../lib/services/course";
 
 export default function CourseDetailPage() {
-  const gridStyle = {
-    width: "25%",
-    textAlign: "center",
-  };
   const router = useRouter();
-
-  const { id } = router.query;
 
   const [data, setData] = useState<CourseDetail>();
 
   useEffect(() => {
+    const { id } = router.query;
+    console.log("id is " + id);
     if (id) {
       getCourseDetailService(id.toString()).then((res) => {
         console.log(res);
@@ -50,9 +46,8 @@ export default function CourseDetailPage() {
             //   loading={isLoading}
             courseTitle={data?.name}
             description={data}
-          >
-            <Card.Grid style={gridStyle}>Content</Card.Grid>
-          </CourseCard>
+            grid
+          ></CourseCard>
         </Col>
         <Col span={15}>123</Col>
       </Row>

@@ -1,4 +1,5 @@
 import axios, { AxiosPromise, AxiosResponse } from "axios";
+import { userInfo } from "os";
 import { apiPath } from "./config";
 
 // const token = localStorage.getItem("token");
@@ -42,6 +43,11 @@ export async function Login(userInfo: userInfo): Promise<any> {
     .post(apiPath + "/login", userInfo)
     .then((res) => res.data)
     .catch((err) => console.log(err));
+}
+
+export async function Logout() {
+  const res = await axios.post(apiPath + "/logout", userInfo);
+  if (res.data.msg === "success") localStorage.removeItem("token");
 }
 
 // type IPath = (string | number)[] | string | number;
