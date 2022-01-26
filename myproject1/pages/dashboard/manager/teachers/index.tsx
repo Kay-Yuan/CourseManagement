@@ -321,6 +321,14 @@ export default function TeachersIndex() {
             title="Country"
             dataIndex="country"
             key="country"
+            filters={[
+              { text: "China", value: "China" },
+              { text: "Australia", value: "Australia" },
+              { text: "Mali", value: "Mali" },
+            ]}
+            onFilter={(value, record: TeacherInList) =>
+              record.country === value
+            }
           />
           <Table.Column<TeacherInList>
             title="Email"
