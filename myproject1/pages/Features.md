@@ -6,14 +6,14 @@
 ## Work Items:
 1. Teacher List:
     - Can list all teacher in table
-      - **Accept Criteria**
+      - **Acceptance Criteria**
       - I can find (go to different pages to look for it) all teachers I want to see
     - This table is paged with options to change page number and records number on each page
-      - **Accept Criteria**
+      - **Acceptance Criteria**
       - There is a controller to change current page number and the corresponding content of that page is displayed
       - There is a controller to change number of records on each page and the correct number is on each page
     - Sort on name
-      - **Accept Criteria**
+      - **Acceptance Criteria**
       - Records can be sorted by name for current page
       - [Out of scope]:sorted on all records
     - Filter on country
@@ -49,5 +49,28 @@
 
 ## Work Items:
 1. Course list:
-   1. I can find all courses in one page
-   2. Each course has a info card with detail(start time/Duration/Teacher/Student limit) and more detail link
+   1. Can list courses as cards
+      1. I can find all courses in one page
+      2. I can scroll down to load more data when I want
+      3. Each course has a info card with detail(start time/Duration/Teacher/Student limit)
+   2. Link to detail
+      1. Each course has a link button for more detail 
+2. Course detail:
+   1. Can show the all details of a course
+      1. There are two columns to show the detail of course(...), left is a card with more detail; right will show other detail(...)
+3. Add course:
+   1. Can collect info of a new course from input
+   2. Can add the new course to database
+4. Edit/update course:
+   1. Can show and edit existing course detail
+   2. Can update the change
+
+
+## Mind map 
+1. Course list:
+   0. Set up page UI:
+      1. <DashBoard> <Breadcrumb> <List>
+   
+   1. Call API
+      1. Url path
+      2. Data model

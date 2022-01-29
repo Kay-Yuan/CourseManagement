@@ -10,9 +10,10 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 export default function AllCourses() {
   const [isLoading, setIsLoading] = useState(false);
-  const [courseList, setcourseList] = useState<getCourseResponse[]>();
+  const [courseList, setcourseList] = useState<getCourseResponse[]>([]);
   const [query, setQuery] = useState<CoursesQuery>();
-  // const [total, setTotal] = useState<number>();
+  const [total, setTotal] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
 
   // function loadMoreData() {
   //   if (isLoading) {
@@ -29,17 +30,19 @@ export default function AllCourses() {
   //       setIsLoading(false);
   //     });
   // }
-
+  function loadMoreData() {
+    setPage(page + 1);
+  }
   useEffect(() => {
     setIsLoading(true);
-    const response = getCourseService();
+    const response = getCourseService({ page: page, limit: 20 });
     response.then((res) => {
-      setcourseList(res.data.courses);
-      // setTotal(res.data.courses.length);
+      setcourseList([...courseList, ...res.data.courses]);
+      setTotal(res.data.total);
     }); // state will update after whole function changed
 
     setIsLoading(false);
-  }, []);
+  }, [page]);
 
   return (
     <DashBoard>
@@ -48,37 +51,37 @@ export default function AllCourses() {
         <Breadcrumb.Item>Course</Breadcrumb.Item>
         <Breadcrumb.Item>All Courses</Breadcrumb.Item>
       </Breadcrumb>
-      {/* <InfiniteScroll
-        dataLength={courseList ? courseList.length : 0}
+      <InfiniteScroll
+        dataLength={courseList.length}
         next={loadMoreData}
         hasMore={courseList.length < total}
         loader={<h4>Loading...</h4>}
         endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
         scrollableTarget="scrollableDiv"
-      > */}
-      <List
-        grid={{ gutter: 16, column: 4 }}
-        loading={isLoading}
-        dataSource={courseList}
-        renderItem={(item) => (
-          <List.Item>
-            <CourseCard
-              loading={isLoading}
-              courseTitle={item.name}
-              description={item}
-            ></CourseCard>
-            <Button type="primary" style={{ marginBlock: "10px" }}>
-              <Link
-                href={`/dashboard/manager/courses/${item.id}`}
-                key={item.id}
-              >
-                Read More
-              </Link>
-            </Button>
-          </List.Item>
-        )}
-      />
-      {/* </InfiniteScroll> */}
+      >
+        <List
+          grid={{ gutter: 16, column: 4 }}
+          loading={isLoading}
+          dataSource={courseList}
+          renderItem={(item) => (
+            <List.Item>
+              <CourseCard
+                loading={isLoading}
+                courseTitle={item.name}
+                description={item}
+              ></CourseCard>
+              <Button type="primary" style={{ marginBlock: "10px" }}>
+                <Link
+                  href={`/dashboard/manager/courses/${item.id}`}
+                  key={item.id}
+                >
+                  Read More
+                </Link>
+              </Button>
+            </List.Item>
+          )}
+        />
+      </InfiniteScroll>
     </DashBoard>
   );
 }
