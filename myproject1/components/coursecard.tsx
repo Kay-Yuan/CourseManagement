@@ -48,7 +48,13 @@ export default function CourseCard(props: any) {
       <Card
         // title={props.courseTitle}
         style={{ textAlign: "left", width: "100%" }}
-        cover={<Avatar size={100} shape="circle" style={{ margin: "auto" }} />}
+        cover={
+          <Avatar
+            size={100}
+            shape="circle"
+            style={{ margin: "auto", marginTop: "1vw" }}
+          />
+        }
         loading={props.loading}
         // bodyStyle={{ textAlign: "center" }}
         hoverable={hoverable}

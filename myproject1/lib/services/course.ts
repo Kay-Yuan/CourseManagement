@@ -1,5 +1,5 @@
 import axios, { AxiosPromise, AxiosResponse } from "axios";
-import { CoursesQuery, getCourseResponse } from "../model/course";
+import { CourseDetail, CoursesQuery, getCourseResponse } from "../model/course";
 import { getService, postService } from "./api-services";
 import { apiPath } from "./config";
 
@@ -38,4 +38,26 @@ export async function getCourseDetailService(
   return getService(endPoint)
     .then((res) => res.data)
     .catch((err) => console.log(err));
+}
+
+export function generateClassTime(item: string, data: CourseDetail) {
+  if (data !== undefined && data.schedule.classTime !== null) {
+    const res = data.schedule.classTime.find((item1) =>
+      item1.split(" ")[0].includes(item)
+    );
+    return res?.split(" ")[1];
+  }
+}
+
+export function create_UUID() {
+  var dt = new Date().getTime();
+  var uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+    /[xy]/g,
+    function (c) {
+      var r = (dt + Math.random() * 16) % 16 | 0;
+      dt = Math.floor(dt / 16);
+      return (c == "x" ? r : (r & 0x3) | 0x8).toString(16);
+    }
+  );
+  return uuid;
 }
