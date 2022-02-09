@@ -31,12 +31,15 @@
    1. Call API and implement antd relevant compounents 
       1. Call API to get the first 20 courses info
       2. Add <InfiniteScroll> for scroll down to load more data
+      3. Implement <Card> into <CourseCard>, set the appropriate properties
+   2. Add button link to detail page ([id].tsx )
 
 2. Course Detail:
+   1. Call API and extend <CourseCard> by <Card.Grid> to display price etc
 3. Add Course:
    1. Implement <Steps> <Form> to the Add Course page
-   2. Apply property layout for the form items
-   3. Submit form via call API to the server
+      1. Apply property layout for the form items and each step
+   2. Submit form via call API to the server at the final step
 4. Edit/update course:
       
 

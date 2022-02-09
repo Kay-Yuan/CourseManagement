@@ -13,7 +13,6 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import CourseCardAction from "../../../../components/cardaction";
 import CourseCard from "../../../../components/coursecard";
 import DashBoard from "../../../../components/layouts/dashboard";
 import { CourseDetail } from "../../../../lib/model/course";

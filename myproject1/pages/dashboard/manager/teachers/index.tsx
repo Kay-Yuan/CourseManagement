@@ -55,12 +55,7 @@ export default function TeachersIndex() {
       const response = query
         ? await getTeacherResponse(pagination, query)
         : await getTeacherResponse(pagination);
-      // const response = await getTeacherResponse();
-      // console.log(response);
-      // setPagination({
-      //   ...pagination,
-      //   total: response.data.total,
-      // });
+
       setTotal(response.data.total);
       const rows: TeacherInList[] = processTeacherData(response);
       setData(rows);
@@ -78,29 +73,9 @@ export default function TeachersIndex() {
     // filters: Record<string, FilterValue | null>,
     // sorter: SorterResult<Student> | SorterResult<Student>[]
   ): void => {
-    // fetch({
-    //   // sortField: sorter.field,
-    //   // sortOrder: sorter.order,
-    //   pagination,
-    //   // ...filters,
-    // });
     setPagination({ ...pagination });
     // console.log(pagination);
     fetchData(query);
-
-    // function fetch(params: any) {
-    //   const token = localStorage.getItem("token");
-    //   setIsLoading(true);
-    //   console.log(pagination);
-    //   // process pagination
-    //   try {
-    //     fetchData();
-    //   } catch (error) {
-    //     console.log(error);
-    //   } finally {
-    //     setIsLoading(false);
-    //   }
-    // }
   };
 
   async function onSearch(value: string) {
