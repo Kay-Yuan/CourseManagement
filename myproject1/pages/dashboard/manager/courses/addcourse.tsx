@@ -12,6 +12,7 @@ import {
   Select,
   Space,
   Steps,
+  TimePicker,
   Upload,
 } from "antd";
 import { useEffect, useState } from "react";
@@ -33,6 +34,7 @@ import {
 } from "../../../../lib/services/teacher";
 import { TeacherInList } from "../../../../lib/model/teacher";
 import InfiniteScroll from "react-infinite-scroll-component";
+import Link from "next/link";
 
 const { Step } = Steps;
 const { Option } = Select;
@@ -89,6 +91,10 @@ export default function AddCourse() {
 
     setCourseInfo(courseStep1);
   }
+
+  function handleStep2() {}
+
+  const weeks = ["Monday", "Tuesday"];
 
   const steps = [
     {
@@ -312,12 +318,12 @@ export default function AddCourse() {
     {
       title: "Course Schedule",
       content: (
-        <Form layout="vertical" onFinish={handleStep1} preserve={false}>
+        <Form layout="vertical" onFinish={handleStep2} preserve={false}>
           <Row style={{ justifyContent: "space-evenly" }}>
             <Col span={11}>
               <Form.Item name="chapters" label="Chapters">
                 <Form.List
-                  name="names"
+                  name="chapterlist"
                   // rules={[
                   //   {
                   //     validator: async (_, names) => {
@@ -332,8 +338,11 @@ export default function AddCourse() {
                     <>
                       {fields.map((filed, name, ...restField) => (
                         <Space
-                          // key={parseInt(filed)}
-                          style={{ display: "flex", marginBottom: 8 }}
+                          key={filed.key}
+                          style={{
+                            display: "flex",
+                            marginBottom: 8,
+                          }}
                           align="baseline"
                         >
                           <Form.Item
@@ -346,17 +355,29 @@ export default function AddCourse() {
                               },
                             ]}
                           >
-                            <Input placeholder="Chapter Name" />
+                            <Input
+                              placeholder="Chapter Name"
+                              // style={{ width: "30px" }}
+                            />
                           </Form.Item>
+
                           <Form.Item
                             {...restField}
                             name={[name, "chaptercontent"]}
                             rules={[
-                              { required: true, message: "Missing last name" },
+                              {
+                                required: true,
+                                message: "Missing last name",
+                              },
                             ]}
+                            // style={{ width: "100%" }}
                           >
-                            <Input placeholder="Chapter Content" />
+                            <Input
+                              placeholder="Chapter Content"
+                              // style={{ width: "18rem" }}
+                            />
                           </Form.Item>
+
                           <MinusCircleOutlined onClick={() => remove(name)} />
                         </Space>
                       ))}
@@ -378,7 +399,90 @@ export default function AddCourse() {
             </Col>
             <Col span={11}>
               <Form.Item name="classtimes" label="Class times">
-                <Input placeholder="course name" />
+                <Form.List
+                  name="classtimeslist"
+                  // rules={[
+                  //   {
+                  //     validator: async (_, names) => {
+                  //       if (!names || names.length < 1) {
+                  //         return Promise.reject(new Error("At least 1 skill"));
+                  //       }
+                  //     },
+                  //   },
+                  // ]}
+                >
+                  {(fields, { add, remove }, { errors }) => (
+                    <>
+                      {fields.map((field, name, ...restField) => (
+                        <Space
+                          key={field.key}
+                          style={{
+                            display: "flex",
+                            marginBottom: 8,
+                          }}
+                          align="baseline"
+                        >
+                          <Form.Item
+                            noStyle
+                            shouldUpdate={(prevValues, curValues) =>
+                              prevValues.area !== curValues.area ||
+                              prevValues.sights !== curValues.sights
+                            }
+                          >
+                            {() => (
+                              <Form.Item
+                                {...field}
+                                // label="Sight"
+                                name={[field.name, "sight"]}
+                                rules={[
+                                  { required: true, message: "Missing sight" },
+                                ]}
+                              >
+                                <Select
+                                  // disabled={!form.getFieldValue("area")}
+                                  style={{ width: 200 }}
+                                >
+                                  {weeks.map((item) => (
+                                    <Option key={item} value={item}>
+                                      {item}
+                                    </Option>
+                                  ))}
+                                </Select>
+                              </Form.Item>
+                            )}
+                          </Form.Item>
+                          <Form.Item
+                            {...field}
+                            // label="Price"
+                            name={[field.name, "price"]}
+                            rules={[
+                              {
+                                type: "object" as const,
+                                required: true,
+                                message: "Please select time!",
+                              },
+                            ]}
+                          >
+                            <TimePicker style={{ width: 300 }} />
+                          </Form.Item>
+
+                          <MinusCircleOutlined onClick={() => remove(name)} />
+                        </Space>
+                      ))}
+                      <Form.Item>
+                        <Button
+                          type="dashed"
+                          onClick={() => add()}
+                          style={{ width: "100%" }}
+                          icon={<PlusOutlined />}
+                        >
+                          Add field
+                        </Button>
+                        <Form.ErrorList errors={errors} />
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List>
               </Form.Item>
             </Col>
           </Row>
@@ -387,7 +491,27 @@ export default function AddCourse() {
     },
     {
       title: "Success",
-      content: "Last-content",
+      content: (
+        <div style={{ textAlign: "center" }}>
+          <img src="" alt="" />
+          <p>Successfully Create Course!</p>
+          <div>
+            <Button
+              type="primary"
+              href="/dashboard/manager/courses/allcourses"
+              style={{ margin: 5 }}
+            >
+              Go Course
+            </Button>
+            <Button
+              href="/dashboard/manager/courses/addcourse"
+              style={{ margin: 5 }}
+            >
+              Create Again
+            </Button>
+          </div>
+        </div>
+      ),
     },
   ];
 
