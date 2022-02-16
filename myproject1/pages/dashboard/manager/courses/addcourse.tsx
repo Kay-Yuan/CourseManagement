@@ -336,50 +336,42 @@ export default function AddCourse() {
                 >
                   {(fields, { add, remove }, { errors }) => (
                     <>
-                      {fields.map((filed, name, ...restField) => (
-                        <Space
-                          key={filed.key}
-                          style={{
-                            display: "flex",
-                            marginBottom: 8,
-                          }}
-                          align="baseline"
-                        >
-                          <Form.Item
-                            {...restField}
-                            name={[name, "chaptername"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Missing chapter name",
-                              },
-                            ]}
-                          >
-                            <Input
-                              placeholder="Chapter Name"
-                              // style={{ width: "30px" }}
-                            />
-                          </Form.Item>
+                      {fields.map((field, name, ...restField) => (
+                        <Row key={field.key} gutter={8}>
+                          <Col span={8}>
+                            <Form.Item
+                              {...restField}
+                              name={[name, "chaptername"]}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Missing chapter name",
+                                },
+                              ]}
+                            >
+                              <Input placeholder="Chapter Name" />
+                            </Form.Item>
+                          </Col>
 
-                          <Form.Item
-                            {...restField}
-                            name={[name, "chaptercontent"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Missing last name",
-                              },
-                            ]}
-                            // style={{ width: "100%" }}
-                          >
-                            <Input
-                              placeholder="Chapter Content"
-                              // style={{ width: "18rem" }}
-                            />
-                          </Form.Item>
+                          <Col span={14}>
+                            <Form.Item
+                              {...restField}
+                              name={[name, "chaptercontent"]}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Missing last name",
+                                },
+                              ]}
+                            >
+                              <Input placeholder="Chapter Content" />
+                            </Form.Item>
+                          </Col>
 
-                          <MinusCircleOutlined onClick={() => remove(name)} />
-                        </Space>
+                          <Col span={2} style={{ marginTop: "6px" }}>
+                            <MinusCircleOutlined onClick={() => remove(name)} />
+                          </Col>
+                        </Row>
                       ))}
                       <Form.Item>
                         <Button
@@ -414,60 +406,71 @@ export default function AddCourse() {
                   {(fields, { add, remove }, { errors }) => (
                     <>
                       {fields.map((field, name, ...restField) => (
-                        <Space
-                          key={field.key}
-                          style={{
-                            display: "flex",
-                            marginBottom: 8,
-                          }}
-                          align="baseline"
-                        >
-                          <Form.Item
-                            noStyle
-                            shouldUpdate={(prevValues, curValues) =>
-                              prevValues.area !== curValues.area ||
-                              prevValues.sights !== curValues.sights
-                            }
-                          >
-                            {() => (
-                              <Form.Item
-                                {...field}
-                                // label="Sight"
-                                name={[field.name, "sight"]}
-                                rules={[
-                                  { required: true, message: "Missing sight" },
-                                ]}
-                              >
-                                <Select
-                                  // disabled={!form.getFieldValue("area")}
-                                  style={{ width: 200 }}
+                        // <Space
+                        //   key={field.key}
+                        //   style={{
+                        //     display: "flex",
+                        //     marginBottom: 8,
+                        //   }}
+                        //   align="baseline"
+                        // >
+                        <Row key={field.key} gutter={8}>
+                          <Col span={8}>
+                            <Form.Item
+                              noStyle
+                              shouldUpdate={(prevValues, curValues) =>
+                                prevValues.area !== curValues.area ||
+                                prevValues.sights !== curValues.sights
+                              }
+                            >
+                              {() => (
+                                <Form.Item
+                                  {...field}
+                                  // label="Sight"
+                                  name={[field.name, "sight"]}
+                                  rules={[
+                                    {
+                                      required: true,
+                                      message: "Missing sight",
+                                    },
+                                  ]}
                                 >
-                                  {weeks.map((item) => (
-                                    <Option key={item} value={item}>
-                                      {item}
-                                    </Option>
-                                  ))}
-                                </Select>
-                              </Form.Item>
-                            )}
-                          </Form.Item>
-                          <Form.Item
-                            {...field}
-                            // label="Price"
-                            name={[field.name, "price"]}
-                            rules={[
-                              {
-                                type: "object" as const,
-                                required: true,
-                                message: "Please select time!",
-                              },
-                            ]}
-                          >
-                            <TimePicker style={{ width: 300 }} />
-                          </Form.Item>
+                                  <Select
+                                    // disabled={!form.getFieldValue("area")}
+                                    style={{ width: "100%" }}
+                                  >
+                                    {weeks.map((item) => (
+                                      <Option key={item} value={item}>
+                                        {item}
+                                      </Option>
+                                    ))}
+                                  </Select>
+                                </Form.Item>
+                              )}
+                            </Form.Item>
+                          </Col>
+                          <Col span={14}>
+                            <Form.Item
+                              {...field}
+                              // label="Price"
+                              name={[field.name, "price"]}
+                              rules={[
+                                {
+                                  type: "object" as const,
+                                  required: true,
+                                  message: "Please select time!",
+                                },
+                              ]}
+                            >
+                              <TimePicker style={{ width: "100%" }} />
+                            </Form.Item>
+                          </Col>
 
-                          <MinusCircleOutlined onClick={() => remove(name)} />
-                        </Space>
+                          <Col span={2} style={{ marginTop: "6px" }}>
+                            <MinusCircleOutlined onClick={() => remove(name)} />
+                          </Col>
+                        </Row>
+                        // </Space>
                       ))}
                       <Form.Item>
                         <Button

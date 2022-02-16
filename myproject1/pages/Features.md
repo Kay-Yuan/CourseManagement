@@ -41,6 +41,7 @@
       1. Apply property layout for the form items and each step
    2. Submit form via call API to the server at the final step
 4. Edit/update course:
+   1. implement <InputGroup>
       
 
 
