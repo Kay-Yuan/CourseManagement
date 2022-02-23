@@ -1,5 +1,20 @@
 # Features:
 
+## Overview
+- Overview for managers
+- Overview for teachers
+- Overview for students
+
+1. Manager Overview
+   1. Can show summary of students, teachers, courses
+   2. Can show distribution of students and teachers
+   3. Can show type of students and teachers and courses
+   4. Can show increment and languages.
+   5. Can show course schedule per weekday
+2. Teacher Overview
+3. Student Overview
+
+
 ## Course Management
 - Course info: list and detail
 - Course : Add, edit
